@@ -1,0 +1,2474 @@
+---
+title: "ForgeLoop CLI Reference"
+description: "This document provides a complete operational reference for every ForgeLoop CLI command."
+---
+
+```text
+Usage: forgeloop <command> [options]
+```
+
+## Common Options
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--help`: show this help
+- `--version`: show the installed package version
+
+Commands that support structured machine-readable output document `--json` in their command-specific option list.
+
+## Environment: the TypeSafe API key
+
+ForgeLoop uses TypeSafe's pinned Jev model for bounded semantic decisions
+(intake, route and guide relevance, context ranking, failure triage, review
+planning). Jev only advises; ForgeLoop stays the authority for state, gates,
+evidence and completion (see
+[`SEMANTIC_DECISION_PLANE.md`](/SEMANTIC_DECISION_PLANE)).
+
+- **Get a key** from your TypeSafe account at [typesafe.ai](https://typesafe.ai)
+  (SDK documentation: [docs.typesafe.ai](https://docs.typesafe.ai/)).
+- **Set it** as `TYPESAFE_API_KEY` in every shell, IDE or agent that runs
+  ForgeLoop, and as a CI secret for jobs that run lifecycle commands.
+  ForgeLoop reads it only from the environment and never writes it to state,
+  evidence, events, diagnostics or logs.
+- **Needed by** commands that make a live semantic decision, such as
+  `contract-create`, `route`, `context-plan`, `model-route` and
+  `semantic-plan`. Without it they stop with `E_DECISION_ENGINE_AUTH_REQUIRED`
+  (a rejected key gives `E_DECISION_ENGINE_AUTH_INVALID`). `doctor` reports
+  whether it is set, and `decision-status --health` checks it live.
+- **Not needed** to verify evidence: `evidence-verify` and the independent
+  `npx @cassiomc1/forgeloop-verify` run without it. Inspection and recovery
+  stay local.
+
+```bash
+export TYPESAFE_API_KEY=<your TypeSafe API key>   # current shell only
+forgeloop doctor
+```
+
+In GitHub Actions, store it as a repository secret and pass it to the steps
+that run lifecycle commands:
+
+```yaml
+env:
+  TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+```
+
+Prefer a secret manager or your agent's environment settings over a dotfile.
+If a key is ever pasted into a chat, an issue or a log, revoke it and create a
+new one.
+
+## Storage maintenance
+
+### `storage-migration-status`
+
+Inspects the bootstrap storage layout and retained maintenance ownership even
+when ordinary commands are excluded. It neither opens nor validates the
+database, removes an exclusion, nor proves that its owner is alive or dead.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit bootstrap storage layout and retained maintenance ownership
+
+### `storage-migration-resume`
+
+Requires externally excluded writers and the exact retained dead local owner UUID reported by `storage-migration-status`. Continues verified STAGED, ARCHIVING or ARCHIVED publication, or verifies PUBLISHED current state without restoration. Verified unpublished staging can be retained and rebuilt. Unrecorded capture, unbound candidate files and interrupted owner handoffs remain refused.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: retained migration directory relative to the project
+- `--expected-owner <uuid>`: exact retained maintenance owner reported by storage-migration-status
+- `--writers-quiesced`: assert that all writers, including older clients, have been externally stopped
+- `--reconcile-unbound-handoff`: preserve an unbound legacy handoff by atomic archival before resuming the exact dead owner
+- `--json`: emit recovery verification metadata
+
+### `storage-rollback-resume`
+
+Resume a recorded source rollback publication under an exact dead local maintenance owner. Stop and exclude all writers; keep native writes excluded. The clean supported legacy target is validated before owner adoption. Actual source/native locations, captured bytes, independent backup and owner history are revalidated before operation journals change. Target validation must pass for every task before maintenance release.
+
+```bash
+forgeloop storage-rollback-resume --path <project> --destination <retained-migration> --expected-owner <uuid> --legacy-root <clean-supported-checkout> --writers-quiesced --native-writes-excluded --json
+```
+
+Recorded `PREPARING`/`READY` preparation and staging journals, and `SWITCHING`, `NATIVE_RETAINED` and `RESTORED` publication journals are supported. Incomplete staging copies are retained before rebuilding from verified captured source. Unrecorded directories, remote/live owners and ambiguous bytes are refused and retained for reconciliation. No deletion or replacement of retained source/native backups is authorized by failure.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--expected-owner <uuid>`: exact retained dead local owner reported by storage-migration-status
+- `--destination <path>`: retained migration with recorded rollback preparation, staging or publication
+- `--legacy-root <path>`: clean supported pinned legacy checkout used for actual target validation
+- `--writers-quiesced`: assert that all writers, including older clients, have been externally stopped and excluded
+- `--native-writes-excluded`: assert that native writes have been excluded since migration; snapshot equality alone does not prove this
+- `--json`: emit restoration and target-validation metadata
+
+### `storage-rollback`
+
+Conditionally restore the preserved legacy source before any native writes have been accepted. Stop and exclude every writer, including old clients and background integrations. Inventory the clients and retain their exclusion throughout validation. Snapshot equality does not prove that no native writes occurred: `--native-writes-excluded` is an explicit operator assertion about the entire interval since migration. If native writes occurred, use a verified reverse export for the exact target version or forward repair instead.
+
+```bash
+forgeloop storage-rollback --path <project> --destination <retained-migration> --legacy-root <clean-supported-checkout> --writers-quiesced --native-writes-excluded --json
+```
+
+The supported validator checkout is the clean tracked Git commit `ee9ce11123d4e728d3dbc92f5d62d4bf41bb79c5`. Other target commits are refused. The command validates that target before acquiring maintenance, revalidates retained source and unchanged native authority, backs up native database and referenced attachment bytes, stages captured source, retains original native files by rename, and publishes exact source roots. It runs the pinned legacy CLI against every retained task and checks the task catalog before allowing maintenance release. The command executes Git and the explicitly supplied target CLI locally.
+
+Original native files, independent backups, captured source, inventories and validation receipts are retained. No automatic disposal occurs. On failure, keep all writers excluded and inspect maintenance owner and retained operation state. A failed attempt is not authorization to delete exclusion or retry over retained paths. Use `storage-rollback-resume` only for recorded preparation, staging or publication states. Unbound attempts remain refused; the original migration resume command must not be used to recover rollback operations.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: retained published migration directory relative to the project
+- `--legacy-root <path>`: clean supported pinned legacy checkout used for actual target validation
+- `--writers-quiesced`: assert that all writers, including older clients, have been externally stopped and excluded
+- `--native-writes-excluded`: assert that native writes have been excluded since migration; snapshot equality alone does not prove this
+- `--json`: emit restoration and target-validation metadata
+
+### `storage-migrate`
+
+Initial migration requires a new retained destination and externally stopped writers, including older clients. It validates and retains legacy sources, archives operational files, activates SQLite, and verifies current state. Failed attempts retain maintenance exclusion and evidence. Resume supports verified publication stages and identified unpublished staging; unrecorded capture and unbound candidate files remain refused.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: new retained migration directory relative to the project; missing parent directories are created
+- `--writers-quiesced`: assert that all writers, including older clients, have been externally stopped
+- `--json`: emit migration publication and verification metadata
+
+### `storage-restore-resume`
+
+Resumes restore after confirming that its exact retained local owner is dead. Requires externally excluded writers. Partial snapshots and prior rebuild intents are retained before rebuilding from verified source; completed preparation must pass source parity and domain validation. Conflicting intent records, unbound objects and changed preterminal databases remain refused. Terminal verification preserves accepted later work.
+
+```bash
+forgeloop storage-restore-resume --path /path/to/project --operation <restore-uuid> --expected-owner <owner-uuid> --writers-quiesced --json
+```
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--operation <uuid>`: exact retained restore journal operation UUID
+- `--expected-owner <uuid>`: exact retained maintenance owner UUID
+- `--replace-active`: explicitly select active replacement with retained outgoing authority
+- `--writers-quiesced`: assert that all writers have been externally stopped
+- `--json`: emit restore recovery metadata
+
+### `storage-restore`
+
+Restores an attachment-inclusive backup into a project with no existing operational state. Requires explicit exclusion of all writers. Retains an independent snapshot and restore journal; failed operations keep maintenance exclusion. Active-project replacement is not supported yet.
+
+```bash
+forgeloop storage-restore --path /path/to/fresh-project --source /path/to/verified-backup --writers-quiesced --json
+```
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--source <path>`: verified attachment-inclusive backup directory; absolute or relative to the target project
+- `--replace-active`: explicitly select active replacement with retained outgoing authority
+- `--writers-quiesced`: assert that all writers have been externally stopped
+- `--json`: emit restore activation metadata
+
+### `storage-backup`
+
+Creates a database-only backup of an existing canonical SQLite project. The
+destination is relative to the project, its parent must exist, and an existing
+destination is never replaced. External attachments are not included.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: new backup file or attachment-inclusive directory relative to the project; parent directory must exist
+- `--include-attachments`: create a new backup directory including all canonically referenced attachment bytes
+- `--json`: emit backup metadata
+
+### `sync-push`
+
+Uploads an encrypted backup of this project's ForgeLoop state to the cloud-sync
+remote so another machine can continue the work. The snapshot is encrypted on
+this machine with `FORGELOOP_SYNC_KEY`; `FORGELOOP_SYNC_TOKEN` authenticates the
+request. A push based on a remote version this machine has not pushed or pulled
+is refused with `E_SYNC_CONFLICT`. See [`CLOUD_SYNC.md`](/CLOUD_SYNC).
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--remote <url>`: sync endpoint (default: https://forgeloop.monster/api/sync)
+- `--repo <owner/name>`: repository the snapshot belongs to (default: from the git origin)
+- `--json`: emit the push result as JSON
+
+### `sync-pull`
+
+Downloads, decrypts and verifies the repository's snapshot, then activates it
+through `storage-restore`: into a fresh project, or over existing local state
+only with `--replace-active`. Requires `--writers-quiesced`.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--remote <url>`: sync endpoint (default: https://forgeloop.monster/api/sync)
+- `--repo <owner/name>`: repository the snapshot belongs to (default: from the git origin)
+- `--replace-active`: replace existing local state; the outgoing state is retained and archived
+- `--merge`: combine whole tasks three-way with local state instead of replacing it
+- `--dry-run`: with --merge, report the per-task plan without changing anything
+- `--writers-quiesced`: assert that all writers have been externally stopped
+- `--json`: emit the pull and restore result as JSON
+
+## Semantic decision projections
+
+### `decision-status`
+
+Reports the pinned Jev configuration and, only when explicitly requested,
+performs a bounded provider health check.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--health`: perform a bounded live Jev health check when credentials are configured
+- `--json`: emit decision-plane status as JSON
+
+### `decision-show`
+
+Shows a persisted semantic decision without performing a live request.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--decision <id>`: decision artifact ID
+- `--json`: emit the decision artifact as JSON
+
+### `context-plan`
+
+Compiles a bounded, non-authoritative context plan.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--decision <id>`: persisted Jev decision artifact ID
+- `--profile <profile>`: bounded context budget profile
+- `--json`: emit the bounded context plan as JSON
+
+### `model-route`
+
+Projects the deterministic model-routing floor. Jev may escalate but cannot
+lower the floor or select vendor-specific models.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--decision <id>`: persisted Jev decision artifact ID
+- `--work <type>`: declared work type
+- `--surface <value>`: affected surface (repeatable)
+- `--risk <value>`: task risk (repeatable)
+- `--platform <value>`: affected platform (repeatable)
+- `--behavior-change`: declare behavior change
+- `--executable-change`: declare executable/configuration change
+- `--generation-required`: declare that generation is required
+- `--architecture-change`: declare an architectural change
+- `--ambiguous`: declare unresolved ambiguity
+- `--json`: emit model-route projection as JSON
+
+### `semantic-plan`
+
+Projects bounded failure, diagnosis, or review planning from ForgeLoop-owned
+question-set categories.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--decision <id>`: persisted Jev decision artifact ID
+- `--kind <failure|diagnosis|review>`: bounded semantic planning projection
+- `--input <json>`: bounded failure, diagnosis, or review context
+- `--json`: emit semantic plan projection as JSON
+
+### `assess`
+
+Assesses an existing repository read-only and emits a guide-routed review plan
+for frontend and backend code. It never executes target code; see
+[`ASSESSMENT.md`](/ASSESSMENT).
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit the repository assessment plan as JSON
+
+### `test-inventory`
+
+Discovers deterministic test units and stable test IDs.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit deterministic test inventory as JSON
+
+### `test-utility`
+
+Persists non-evidence test utility analysis. It never removes tests.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit test utility analysis as JSON
+
+### `test-prune-plan`
+
+Projects a safe non-destructive test pruning plan.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit test prune plan as JSON
+
+### `test-prune-probe`
+
+Probes only eligible candidates in isolation and never modifies the live tree.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--test <id>`: stable test ID to probe in isolation
+- `--json`: emit test prune probe as JSON
+
+---
+
+## CLI Syntax Contract
+
+ForgeLoop uses a definition-driven command-line parser:
+
+- **Bootstrap Options**: Before the command, only common options (`--path <directory>`, `--help`, `--version`, `-h`, `-v`) are accepted.
+- **Command-Specific Options**: Available after command discovery.
+- **Equals Syntax**: All value-taking long options support both `--option value` and `--option=value`.
+- **String Options**: Reject empty values by default (e.g. `--path=` or `--task=""` are rejected).
+- **Boolean Flags**: Never accept inline values (e.g. `--json=false` is rejected).
+- **Argv Passthrough**: Everything after a command's `--` passthrough marker is preserved exactly and is not parsed as ForgeLoop syntax.
+
+### Execution profile and compact context
+
+`route` resolves the orthogonal execution profile from `auto`, `light`,
+`balanced`, or `full`. CLI requests take precedence over project configuration,
+but a deterministic safety floor always wins. The profile changes context and
+process depth only; it never bypasses lifecycle phases, gates, verification,
+authority, provenance, or completion validation.
+
+For high-frequency host reads, request bounded projections:
+
+```bash
+forgeloop next --task <id> --compact --json
+forgeloop task-show --task <id> --compact --json
+```
+
+Compact output always preserves task identity, phase, resolved profile,
+required next action or status, terminal state where applicable, and blocker
+error codes. Default output and default JSON remain unchanged.
+
+---
+
+## Command Index by Purpose
+
+| Category | Commands |
+| --- | --- |
+| **Setup & Maintenance** | [`storage-restore-resume`](#storage-restore-resume), [`storage-restore`](#storage-restore), [`storage-migration-status`](#storage-migration-status), [`storage-migration-resume`](#storage-migration-resume), [`storage-rollback`](#storage-rollback), [`storage-rollback-resume`](#storage-rollback-resume), [`storage-migrate`](#storage-migrate), [`storage-backup`](#storage-backup), [`sync-push`](#sync-push), [`sync-pull`](#sync-pull), [`contract-revise`](#contract-revise), [`init`](#init), [`index-setup`](#index-setup), [`index-start`](#index-start), [`index-stop`](#index-stop), [`index-rebuild`](#index-rebuild), [`update`](#update), [`checkpoint-revalidate`](#checkpoint-revalidate), [`task-migrate`](#task-migrate), [`migrate-protocol`](#migrate-protocol), [`task-unlock`](#task-unlock), [`task-recover`](#task-recover), [`task-abandon`](#task-abandon), [`task-repair-contract-bootstrap`](#task-repair-contract-bootstrap), [`task-migrate-contract-bootstrap-repair`](#task-migrate-contract-bootstrap-repair), [`task-repair-legacy-recovery`](#task-repair-legacy-recovery), [`task-resume`](#task-resume) |
+| **Inspection & Diagnostics** | [`protocol-info`](#protocol-info), [`decision-status`](#decision-status), [`decision-show`](#decision-show), [`context-plan`](#context-plan), [`model-route`](#model-route), [`semantic-plan`](#semantic-plan), [`test-inventory`](#test-inventory), [`assess`](#assess), [`test-utility`](#test-utility), [`test-prune-plan`](#test-prune-plan), [`doctor`](#doctor), [`index-status`](#index-status), [`search`](#search), [`metrics`](#metrics), [`usage-record`](#usage-record), [`efficiency`](#efficiency), [`eval`](#eval), [`history`](#history), [`trace`](#trace), [`reflect`](#reflect), [`progress`](#progress), [`profile-interview`](#profile-interview), [`inspect`](#inspect), [`status`](#status), [`validate-state`](#validate-state), [`validate-protocol`](#validate-protocol) |
+| **Verification & Completion** | [`test-prune-probe`](#test-prune-probe), [`quality-baseline`](#quality-baseline), [`quality-verify`](#quality-verify), [`quality-status`](#quality-status), [`prepare-completion`](#prepare-completion), [`run-check`](#run-check), [`record-check`](#record-check), [`record-terminal-result`](#record-terminal-result), [`audit`](#audit), [`report`](#report), [`validate-receipt`](#validate-receipt), [`verify-scope`](#verify-scope) |
+| **Lifecycle & State** | [`discover`](#discover), [`contract-create`](#contract-create), [`gate-record`](#gate-record), [`gate-revalidate`](#gate-revalidate), [`activate`](#activate), [`route`](#route), [`preflight`](#preflight), [`advance`](#advance), [`next`](#next), [`record-diagnosis`](#record-diagnosis), [`record-intervention`](#record-intervention), [`record-hypothesis-disposition`](#record-hypothesis-disposition), [`record-decision-criterion`](#record-decision-criterion), [`complete`](#complete), [`clear-state`](#clear-state), [`reconcile-closure`](#reconcile-closure), [`task-create`](#task-create), [`task-list`](#task-list), [`task-show`](#task-show), [`task-lock-status`](#task-lock-status), [`task-scope`](#task-scope) |
+| **Cross-Harness Continuity** | [`continuity`](#continuity), [`record-continuity`](#record-continuity), [`reconcile-continuity`](#reconcile-continuity), [`clear-continuity`](#clear-continuity), [`handoff-create`](#handoff-create), [`handoff-list`](#handoff-list), [`handoff-show`](#handoff-show) |
+| **Durable Actions & Approvals** | [`run-action`](#run-action), [`action-propose`](#action-propose), [`action-record`](#action-record), [`action-show`](#action-show), [`action-reconcile`](#action-reconcile), [`action-verify`](#action-verify), [`action-authorize`](#action-authorize), [`approval-request`](#approval-request), [`approval-resolve`](#approval-resolve) |
+| **Policy & Auditing** | [`policy`](#policy), [`policy-discover`](#policy-discover), [`policy-status`](#policy-status), [`policy-diff`](#policy-diff), [`rule-verify`](#rule-verify), [`baseline`](#baseline), [`bundle`](#bundle) |
+| **workspace** | [`workspace-bind`](#workspace-bind), [`workspace-status`](#workspace-status) |
+| **task** | [`handoff-accept`](#handoff-accept) |
+| **scope** | [`responsibility-set`](#responsibility-set), [`responsibility-status`](#responsibility-status) |
+| **attestation** | [`attestation-create`](#attestation-create), [`attestation-verify`](#attestation-verify), [`attestation-status`](#attestation-status), [`evidence-export`](#evidence-export), [`evidence-publish`](#evidence-publish), [`evidence-verify`](#evidence-verify), [`attestation-verify-range`](#attestation-verify-range) |
+
+---
+
+## 1. Setup & Maintenance
+
+### `index-setup`
+
+Provisions or reuses the managed Repository Index engine, builds its derived
+index, and starts the owned watcher.
+
+- **Purpose**: Establish mandatory repository-search readiness.
+- **Mutation**: Writes only Repository Index runtime state and cache data.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--asset <path>`: use a preloaded pinned tgrep archive instead of downloading
+- `--force`: rebuild the repository index even when metadata is current
+- `--json`: emit repository-index setup as JSON
+
+### `index-start`
+
+Starts the ForgeLoop-owned Repository Index watcher after a complete index is
+available. A verified healthy server is reused.
+
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit repository-index start as JSON
+
+### `index-stop`
+
+Stops only a server whose repository, index, metadata, executable, and process
+identity are verified as ForgeLoop-owned.
+
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit repository-index stop as JSON
+
+### `index-status`
+
+Reports normalized Repository Index engine, index, policy, watcher, and health
+state without repairing or provisioning it.
+
+Structured output is path-safe by default: it omits machine-local repository,
+index, state, and binary paths. Use `doctor` when an explicitly diagnostic
+surface needs local path details.
+
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit repository-index health as JSON
+
+### `index-rebuild`
+
+Rebuilds only the derived Repository Index cache and restarts its owned
+watcher. ForgeLoop task and protocol artifacts remain outside the deletion
+boundary.
+
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--asset <path>`: use a preloaded pinned tgrep archive instead of downloading
+- `--json`: emit repository-index rebuild as JSON
+
+### `search`
+
+Searches the managed Repository Index through the provider-neutral structured
+search contract. Native tgrep flags are not accepted as a generic pass-through.
+
+The first query performs strong setup checks. Warm queries reuse process-local
+per-repository readiness and avoid repeated `tgrep --version`, native status,
+and process-inspection commands. A server/index failure gets one bounded
+setup-and-retry attempt; native exit code `1` is a successful empty result.
+
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `<pattern>`: regular expression or literal search pattern
+- `--glob <glob>`: include files matching a glob (repeatable)
+- `--type <type>`: include files of a tgrep type (repeatable)
+- `--fixed-strings`: treat the pattern as a literal string
+- `--ignore-case`: search case-insensitively
+- `--smart-case`: use case-insensitive search only for lowercase patterns
+- `--word-regexp`: match whole words only
+- `--context <lines>`: lines of context before and after matches
+- `--before-context <lines>`: lines of context before matches
+- `--after-context <lines>`: lines of context after matches
+- `--max-count <number>`: maximum matches per file
+- `--files-with-matches`: return matching file paths only
+- `--stats`: include observed native search statistics
+- `--json`: emit normalized provider-neutral search JSON
+
+## Workspace, Handoff, Responsibility, Scope, and Attestation
+
+These commands add optional, task-scoped protocol artifacts. They do not turn
+ForgeLoop into an agent runtime, scheduler, delegation service, SCM authority,
+or signing authority.
+
+### `workspace-bind`
+
+Binds the selected task to the current Git worktree identity. Rebinding is
+never implicit.
+
+- **Purpose**: Persist an immutable repository/worktree identity binding for the task.
+- **Mutation**: Writes the workspace binding and appends a `WORKSPACE_BOUND` event.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit binding result as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop workspace-bind --task task-001 --json
+  ```
+
+### `workspace-status`
+
+Reports whether the current Git worktree matches the selected task binding.
+
+- **Purpose**: Inspect workspace binding status without changing task state.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit workspace status as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop workspace-status --task task-001 --json
+  ```
+
+### `handoff-create`
+
+Creates an immutable snapshot of current task state for cross-harness
+continuity. It does not delegate work or create a review assignment.
+
+- **Purpose**: Capture protocol-derived state, evidence, paths, and continuity with optional recipient intent.
+- **Mutation**: Writes an immutable handoff artifact and appends a `HANDOFF_CREATED` event.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--recipient <hint>`: non-authoritative recipient hint
+- `--note <text>`: non-authoritative handoff note
+- `--json`: emit handoff as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop handoff-create --task task-001 --recipient next-harness --note "Continue verification" --json
+  ```
+
+### `handoff-list`
+
+Lists immutable handoff snapshots for a task.
+
+- **Purpose**: Inspect existing handoff snapshots without changing them.
+- **Mutation**: Read-only.
+- **Acceptance projection**: Derives `OPEN`, `ACCEPTED`, `UNBOUND`, or
+  `INCONSISTENT` from the validated event ledger. Invalid or unreadable ledgers
+  are fail-closed and expose `reasonCodes`; they are never treated as empty.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit handoff list as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop handoff-list --task task-001 --json
+  ```
+
+### `handoff-show`
+
+Reads and verifies one immutable handoff snapshot.
+
+- **Purpose**: Inspect one handoff by ID and validate its digest and bindings.
+- **Acceptance projection**: Uses the same fail-closed ledger-derived status as
+  `handoff-list`.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--id <id>`: handoff identifier
+- `--json`: emit handoff as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop handoff-show --task task-001 --id handoff-001 --json
+  ```
+
+### `handoff-accept`
+
+Records exactly-once acceptance of an immutable handoff into the task event ledger.
+
+- **Purpose**: Bind an incoming consumer/harness to an immutable handoff snapshot.
+- **Mutation**: Appends a `HANDOFF_ACCEPTED` event.
+- **Freshness**: Acceptance requires the current canonical state and directly
+  observed repository branch/HEAD to match the immutable snapshot, including a
+  clean committed HEAD drift check.
+- **Human output**: Reports `authority: OPERATIONAL_RECEIPT_ONLY`,
+  `evidence: NONE`, and `claims transferred: NO`; acceptance is exactly-once
+  operational receipt only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--handoff <id>`: handoff identifier
+- `--consumer-id <id>`: consumer identifier accepting the handoff
+- `--harness <name>`: optional harness accepting the handoff
+- `--json`: emit acceptance result as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop handoff-accept --task task-001 --handoff handoff-001 --consumer-id agent-42 --json
+  ```
+
+### `responsibility-set`
+
+Creates immutable constraints for the current task pass.
+
+- **Purpose**: Freeze allowed paths, read-only paths, input fingerprints, and required checks.
+- **Mutation**: Writes responsibility constraints and appends a `RESPONSIBILITY_SET` event.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--label <label>`: descriptive pass label; not an identity or role
+- `--allowed-path <path>`: path prefix allowed during this pass (repeatable)
+- `--read-only-path <path>`: path prefix that must not change during this pass (repeatable)
+- `--required-check <id>`: current-cycle check required by this pass (repeatable)
+- `--freeze-contract`: freeze the current contract fingerprint
+- `--freeze-route`: freeze the current route fingerprint
+- `--freeze-claims`: freeze the current effective claims fingerprint
+- `--json`: emit responsibility result as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop responsibility-set --task task-001 --label implementation --allowed-path src --required-check unit-tests --json
+  ```
+
+### `responsibility-status`
+
+Validates active responsibility constraints against current paths, inputs, and
+checks.
+
+- **Purpose**: Inspect whether the current task pass remains within its immutable responsibility boundary.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit responsibility status as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop responsibility-status --task task-001 --json
+  ```
+
+### `verify-scope`
+
+Resolves a provable verification boundary without launching checks.
+
+- **Purpose**: Persist exact changed, claimed, or full verification scope for the current cycle.
+- **Mutation**: Writes a verification-scope artifact and appends a `VERIFICATION_SCOPE_CAPTURED` event.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--mode <mode>`: requested deterministic verification boundary (default: AUTO)
+- `--json`: emit verification scope as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop verify-scope --task task-001 --mode AUTO --json
+  ```
+
+### `attestation-create`
+
+Creates a deterministic in-toto Statement after completion and manifest
+validation.
+
+- **Purpose**: Bind the final source-content manifest to valid completion and audit evidence.
+- **Mutation**: Writes the immutable attestation statement and appends an `ATTESTATION_STATEMENT_CREATED` event.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit attestation statement result as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop attestation-create --task task-001 --json
+  ```
+
+### `attestation-verify`
+
+Verifies a task attestation and current revision without mutating task state.
+
+- **Purpose**: Check statement, manifest, evidence bindings, source bytes, and optional signing-provider policy.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--ref <revision>`: target revision to compare with the manifest
+- `--bundle <path>`: optional external signature bundle
+- `--identity <identity>`: optional exact signer identity policy
+- `--issuer <issuer>`: optional exact signer issuer policy
+- `--revision-provider <provider>`: revision provider (default: git)
+- `--signing-provider <provider>`: signing provider (default: none)
+- `--trusted-root <path>`: trusted signing root path
+- `--require-signature`: require a valid external signature
+- `--json`: emit verification result as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop attestation-verify --task task-001 --json
+  ```
+
+### `attestation-status`
+
+Reports local attestation status and trust level without network access.
+
+- **Purpose**: Summarize the locally available manifest, statement, content, evidence, and signature state.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit attestation status as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop attestation-status --task task-001 --json
+  ```
+
+### `evidence-export`
+
+Exports a completed task's attestation as a portable, redacted evidence bundle
+to commit with the change. See [`EVIDENCE_BUNDLES.md`](/EVIDENCE_BUNDLES).
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--dir <path>`: tracked evidence directory (default: .forgeloop-evidence)
+- `--json`: emit the export result as JSON
+
+### `evidence-publish`
+
+Opt-in. Uploads redacted evidence bundles to the team dashboard (default
+`https://forgeloop.monster/api/evidence`), authenticated by
+`FORGELOOP_SYNC_TOKEN`. Bundles wait in an offline queue under the user
+config directory until the remote accepts them, and every run retries the
+queue. Exits `1` while anything stays queued or was rejected. See
+[`EVIDENCE_BUNDLES.md`](/EVIDENCE_BUNDLES).
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: publish this task's exported bundle
+- `--all`: publish every bundle in the evidence directory
+- `--dir <path>`: tracked evidence directory (default: .forgeloop-evidence)
+- `--remote <url>`: evidence endpoint (default: https://forgeloop.monster/api/evidence)
+- `--repo <owner/name>`: repository the bundles belong to (default: from the git origin)
+- `--json`: emit the publish result as JSON
+
+### `evidence-verify`
+
+Verifies committed evidence bundles for a revision range without local
+ForgeLoop state. Unsigned bundles yield `INTEGRITY_ONLY`; signatures under the
+verifier's policy yield `ATTESTED`.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--revision-provider <provider>`: revision provider (default: git)
+- `--base <revision>`: base revision of the verified range
+- `--head <revision>`: head revision of the verified range
+- `--dir <path>`: tracked evidence directory (default: .forgeloop-evidence)
+- `--exclude <path>`: changed path or dir/** excluded from coverage (verifier policy) (repeatable)
+- `--allow-partial-coverage`: report uncovered changed paths without failing
+- `--require-signature`: require a valid Sigstore signature for every bundle used
+- `--min-assurance <level>`: minimum execution assurance: REPORTED, EXECUTED or HOST_ATTESTED
+- `--brief <path>`: verify the range as the delivery for this task brief (delegation)
+- `--identity <identity>`: exact signer identity policy
+- `--issuer <issuer>`: exact signer issuer policy
+- `--trusted-root <path>`: trusted signing root path
+- `--format <text|markdown>`: human output format (default: text)
+- `--json`: emit the verification result as JSON
+
+### `attestation-verify-range`
+
+Verifies attestation coverage for an opaque revision range through the
+provider-neutral revision contract.
+
+- **Purpose**: Detect uncovered changed paths, conflicting attestations, stale content, and required signature failures.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--revision-provider <provider>`: revision provider (default: git)
+- `--base <revision>`: opaque base revision
+- `--head <revision>`: opaque head revision
+- `--require-complete-coverage`: fail when any changed source path lacks a valid attestation
+- `--require-signature`: require a valid external signature for covered attestations
+- `--signing-provider <provider>`: signing provider (default: none)
+- `--identity <identity>`: optional exact signer identity policy
+- `--issuer <issuer>`: optional exact signer issuer policy
+- `--trusted-root <path>`: trusted signing root path
+- `--json`: emit range verification result as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop attestation-verify-range --base base-ref --head head-ref --require-complete-coverage --json
+  ```
+
+## Durable Actions, Approvals, and Trajectory
+
+ForgeLoop is still a protocol/evidence layer, not an agent runtime. Use
+`COMMIT_UNKNOWN` as a hard stop: do not retry until an external observation is
+recorded with `action-reconcile`. `run-action` has no shell mode and executes
+only exact argv. Caller-reported and externally observed provenance are not host authority, and a project capability policy cannot mint host authority.
+
+### `run-action`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--action <id>`: stable durable action ID
+- `--capability <capability>`: canonical action capability
+- `--effect-class <class>`: durable action effect class
+- `--target <target>`: bounded external action target
+- `--idempotency-key <key>`: immutable logical action idempotency key
+- `--requirement <id>`: bound completion requirement
+- `--required-for-completion`: mark the action as required for completion
+- `--approval <id>`: current fingerprint-bound approval
+- `--timeout-ms <number>`: maximum command duration before termination
+- `-- <argv...>`: exact command argv; shell mode is never used
+- `--json`: emit structured output as JSON
+
+### `action-propose`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--id <id>`: stable action ID
+- `--capability <capability>`: canonical capability
+- `--effect-class <class>`: effect class
+- `--target <target>`: bounded action target
+- `--operation <text>`: bounded operation description
+- `--idempotency-key <key>`: logical action idempotency key
+- `--requirement <id>`: bound requirement
+- `--required-for-completion`: mark required for completion
+- `--json`: emit structured output as JSON
+
+### `action-record`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--action <id>`: durable action ID
+- `--state <state>`: next canonical action state
+- `--provenance <value>`: CALLER_REPORTED or EXTERNAL_OBSERVED
+- `--evidence-ref <ref>`: bounded external evidence reference
+- `--json`: emit structured output as JSON
+
+### `action-show`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--action <id>`: durable action ID
+- `--json`: emit structured output as JSON
+
+### `action-verify`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--action <id>`: durable action ID
+- `--evidence <ref>`: canonical execution or check reference proving the postcondition
+- `--json`: emit structured output as JSON
+
+### `action-authorize`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--action <id>`: durable action ID
+- `--approval <id>`: current fingerprint-bound approval
+- `--json`: emit structured output as JSON
+
+### `action-reconcile`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--action <id>`: ambiguous durable action ID
+- `--outcome <outcome>`: externally observed reconciliation outcome
+- `--evidence-ref <ref>`: bounded external evidence reference (repeatable)
+- `--observed-at <timestamp>`: external observation timestamp
+- `--json`: emit structured output as JSON
+
+### `metrics`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit trajectory metrics as JSON
+
+### `usage-record`
+
+Records optional actor-reported usage telemetry for a task. This data is
+informational and never satisfies verification or completion requirements.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--provider <name>`: provider name reported by the actor
+- `--model <name>`: model name reported by the actor
+- `--input-tokens <number>`: provider-reported input token count
+- `--output-tokens <number>`: provider-reported output token count
+- `--cache-read-tokens <number>`: provider-reported cache-read token count
+- `--cache-write-tokens <number>`: provider-reported cache-write token count
+- `--total-tokens <number>`: provider-reported total token count; never estimated
+- `--cost-usd <amount>`: provider-reported cost in USD; never estimated
+- `--source <kind>`: usage source; CLI fallback accepts only ACTOR_REPORTED
+- `--json`: emit usage telemetry as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop usage-record --task task-001 --provider provider --model provider/model --input-tokens 10000 --output-tokens 2500 --source ACTOR_REPORTED --json
+  ```
+
+  The CLI fallback is always actor-reported. It never promotes the source to a
+  provider or host observation and never satisfies verification evidence.
+
+### `efficiency`
+
+Projects timing and usage efficiency. Comparisons are reported only when the
+project-local baseline metadata is compatible with the current task.
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--baseline <path>`: optional comparable efficiency baseline JSON
+- `--json`: emit efficiency metrics as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop efficiency --task task-001 --baseline benchmark-baseline.json --json
+  ```
+
+  A missing or metadata-incompatible baseline produces `NOT_COMPARABLE` and
+  null comparison values; ForgeLoop does not estimate token or time overhead.
+
+### `eval`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--scenario <path>`: project-local trajectory scenario JSON
+- `--json`: emit evaluation as JSON
+
+### `approval-request`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--approval <id>`: approval artifact ID
+- `--action <id>`: bound action ID
+- `--reason <text>`: bounded approval reason
+- `--json`: emit structured output as JSON
+
+### `approval-resolve`
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--approval <id>`: approval artifact ID
+- `--decision <decision>`: approval decision
+- `--authority <kind>`: CALLER_ACKNOWLEDGED or HOST_ATTESTED
+- `--host-grant-ref <ref>`: host boundary grant reference
+- `--reason <text>`: bounded resolution reason
+- `--json`: emit structured output as JSON
+
+### `protocol-info`
+
+Reports the public compatibility handshake required by external ForgeLoop harnesses.
+
+- **Purpose**: Publishes protocol/schema versioning, lifecycle metadata, command metadata, guide registry, and the documented error registry.
+- **When to use**: Before a harness creates or resumes a ForgeLoop task, and when verifying compatibility without reading internal source.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit complete machine-readable protocol metadata
+
+- **Example**:
+
+  ```bash
+  forgeloop protocol-info --json
+  ```
+
+### `init`
+
+Initializes ForgeLoop in a target repository.
+
+- **Purpose**: Installs canonical instruction templates under `.forgeloop/kit/`, creates discovery shims at root, and prepares `.forgeloop/`.
+- **When to use**: Once when onboarding a new repository to ForgeLoop.
+- **Mutation**: Writes `.forgeloop/kit/`, `.forgeloop/.gitignore`, `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/project-loop.mdc`, `.github/copilot-instructions.md`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--dry-run`: perform deterministic init planning and conflict detection without writing
+
+- **Example**:
+
+  ```bash
+  forgeloop init
+  ```
+
+### `doctor`
+
+Inspects repository health, adapter synchronization, and template integrity.
+
+- **Purpose**: Diagnose missing files, unmanaged adapters, profile issues, and broken kit references.
+- **When to use**: After initialization, after git merges, or when troubleshooting.
+- **Mutation**: Writes `.forgeloop/.manifest.json` only when `--fix` is passed; otherwise performs no mutation.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit doctor findings as JSON
+- `--strict`: treat warnings as unhealthy
+- `--fix`: restore missing managed template files
+- `--adopt <path>`: preserve an existing adapter in the manifest (repeatable)
+
+- **Example**:
+
+  ```bash
+  forgeloop doctor --json
+  ```
+
+### `update`
+
+Updates the managed instruction kit to match the current ForgeLoop package version.
+
+- **Purpose**: Safely updates `.forgeloop/kit/` while preserving project profile facts and local modifications.
+- **When to use**: After upgrading `@cassiomc1/forgeloop` package version.
+- **Mutation**: Updates `.forgeloop/kit/` and adapter shims.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--dry-run`: perform deterministic update planning and conflict detection without writing
+
+- **Example**:
+
+  ```bash
+  forgeloop update
+  ```
+
+---
+
+## 2. Activation & Planning
+
+### `discover`
+
+Records the canonical initial discovery milestone for a newly created task.
+
+- **Purpose**: Transitions a valid post-`task-create` task from `RECEIVED` to the derived `DISCOVERING` phase without creating synthetic work state.
+- **When to use**: When `next` returns `DISCOVER` for a task with no work-state checkpoint.
+- **Mutation**: Appends the task-scoped discovery milestone to the event ledger.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured discovery output as JSON
+
+### `contract-create`
+
+Persists a validated contract and materializes the first real lifecycle checkpoint.
+
+- **Purpose**: Creates a real contract after discovery and writes `work-state.json` with its actual contract fingerprint.
+- **When to use**: When `next` returns `CREATE_CONTRACT` after discovery.
+- **Mutation**: Writes the task contract, task work state, and append-only lifecycle events transactionally.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--contract-file <path>`: validated JSON contract relative to the target
+- `--preset <name>`: bounded contract preset: documentation, bug, feature, or release
+- `--from-ticket <source:id>`: the contract approved in ForgeLoop Cloud for this ticket (needs FORGELOOP_CLOUD_TOKEN)
+- `--json`: emit structured contract output as JSON
+
+### `contract-revise`
+
+Replaces a validated pre-execution contract through an append-only, transaction-witnessed revision.
+
+- **Purpose**: Canonically revise a contract in `CONTRACT_READY`, `ROUTED`, or `PLANNED` before execution starts.
+- **When to use**: When the task objective or scope changes and the existing derived route, preflight, gates, or plan must no longer authorize the work.
+- **Mutation**: Writes the replacement contract, resets derived authorization, appends `CONTRACT_REVISED`, and appends an adjacent `TRANSACTION_COMMITTED(operation=contract-revise)` witness.
+- **Restrictions**: Requires exactly one of `--preset` or `--contract-file`; a `PLANNED` task rewinds to `ROUTED`, and old route/preflight/plan evidence must be regenerated.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--contract-file <path>`: validated replacement JSON contract relative to the target
+- `--preset <name>`: bounded replacement contract preset: documentation, bug, feature, or release
+- `--json`: emit structured contract revision output as JSON
+
+### `gate-record`
+
+Records a gate satisfaction or rejection decision for a task's preflight gate lifecycle.
+
+- **Purpose**: Records structured evidence that a named gate has been satisfied, rejected, or deferred, with optional artifact and decision evidence.
+- **When to use**: During the preflight gate lifecycle to progress gate status from pending to resolved.
+- **Mutation**: Writes a gate artifact under the task namespace and appends a `GATE_SATISFIED` or `GATE_REJECTED` protocol event. A `GATE_SATISFIED` event after `CONTRACT_REVISED` must be immediately followed by the canonical `TRANSACTION_COMMITTED(operation=gate-record)` witness; pre-revision historical gate events remain backward compatible. Repeated satisfied recording is event-idempotent within the current contract epoch, even if the gate artifact is refreshed.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--gate <name>`: required gate name
+- `--status <status>`: satisfied, unverified, or blocked
+- `--artifact <path>`: project-relative evidence artifact (repeatable)
+- `--decision <text>`: caller-recorded gate decision (repeatable)
+- `--unknown <text>`: known unresolved item (repeatable)
+- `--assumption <text>`: approved local assumption (repeatable)
+- `--evidence-file <path>`: bounded local descriptive evidence JSON
+- `--json`: emit structured gate output as JSON
+
+### `gate-revalidate`
+
+Refreshes a satisfied gate whose evidence artifacts changed after execution
+started, while preserving the original approval and append-only history.
+
+- **Purpose**: Revalidate stale gate artifacts only through current task identity and active write claims.
+- **When to use**: When `next` returns `REVALIDATE_GATES` for a post-execution task.
+- **Mutation**: Refreshes the task-scoped gate artifact and appends `GATE_REVALIDATED` with an adjacent `TRANSACTION_COMMITTED(operation=gate-revalidate)` witness.
+- **Restrictions**: Does not bypass `gate-record`'s `E_PHASE_FREEZE`; requires `--acknowledge-stale`, a coherent current route, and changed artifacts covered by active claims.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--gate <name>`: satisfied gate to refresh after safe artifact drift
+- `--acknowledge-stale`: explicitly acknowledge refresh of stale gate artifacts inside active task claims
+- `--json`: emit structured gate revalidation output as JSON
+
+### `route`
+
+Calculates and persists deterministic engineering guide routing.
+
+- **Purpose**: Selects relevant technical guides (e.g. `clean`, `test`, `security`, `design`) from declared work attributes and bounded structural project evidence such as an affected Flutter SDK dependency, supported .NET project, confirmed Node.js backend runtime, valid Rust Cargo package/workspace, recognized C/C++, Java, Go, TypeScript, PHP, or Swift project, or owned SQL artifact. ASP.NET Core and ABP are conditional reasons on the `dotnet` specialist, not standalone guides; SQL is a host-project overlay.
+- **When to use**: During discovery before preflight.
+- **Mutation**: Writes `.forgeloop/task-state/<taskKey>/routing-result.json`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--work <type>`: declared work type
+- `--surface <value>`: affected surface (repeatable)
+- `--risk <value>`: task risk (repeatable)
+- `--platform <value>`: affected platform (repeatable)
+- `--behavior-change`: declare behavior change
+- `--executable-change`: declare executable/configuration change
+- `--execution-profile <profile>`: requested execution profile; safety floors always win
+- `--json`: emit route result as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop route --work complete-website --surface ui --risk untrusted-input --json
+  ```
+
+  A requested profile is an override request, not a safety bypass:
+
+  ```bash
+  forgeloop route --task landing-page --work complete-website --surface ui --execution-profile light --json
+  ```
+
+### `preflight`
+
+Validates pre-implementation readiness and establishes protocol readiness state.
+
+- **Purpose**: Verifies that the contract, route, profile facts, and mandatory pre-implementation gates (e.g. `design`) are satisfied and consistent.
+- **When to use**: Before starting implementation.
+- **Mutation**: Persists `.forgeloop/task-state/<taskKey>/preflight.json` and, when the protocol is ready, may create or synchronize task-scoped resumable work state and lifecycle events.
+- **Return Status**: `READY` or `BLOCKED`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--strict`: require strict protocol compliance
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop preflight --json
+  ```
+
+### `activate`
+
+Creates a protocol/session activation marker for the current harness session.
+
+- **Purpose**: Creates an activation marker containing `sessionId`, `activationMarker`, and `createdAt` for the current harness session. It does not create the canonical lifecycle work state.
+- **When to use**: When starting a session after `preflight` is established.
+- **Mutation**: Writes `.forgeloop/sessions/<sessionId>.json`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop activate --json
+  ```
+
+### `record-decision-criterion`
+
+Records an append-only decision settlement criterion bound to the active contract fingerprint.
+
+- **Purpose**: Records settlement guidance or criteria for open contract decisions without modifying contract schema.
+- **When to use**: To attach settlement guidance to unresolved decisions in `current-contract.unresolvedDecisions[]`.
+- **Mutation**: Appends `DECISION_CRITERION_RECORDED` to event ledger.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--decision <text>`: unresolved decision text matching current contract
+- `--settled-by <text>`: criteria or guidance that settles the decision
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop record-decision-criterion \
+    --decision="Which authentication provider should be used?" \
+    --settled-by="Use provider supporting current session token middleware"
+  ```
+
+### `advance`
+
+Advances the protocol lifecycle phase.
+
+- **Purpose**: Transitions the task along a valid edge of the canonical ForgeLoop work-state machine. The destination is validated against the current phase and the canonical lifecycle transition rules.
+- **When to use**: To declare transitions between workflow stages.
+- **Mutation**: Updates `.forgeloop/task-state/<taskKey>/work-state.json` and appends transition event to ledger.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--to <phase>`: destination workflow phase
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop advance --to EXECUTING
+  ```
+
+### `next`
+
+Computes the deterministic next action required by the protocol.
+
+- **Purpose**: Tells the executing agent or harness exactly what action or command to perform next based on current state, evidence, and continuity.
+- **When to use**: Continuously after each step, and upon starting any session.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--compact`: emit a bounded next-action projection
+- `--explain`: include bounded read-only blocker and recovery explanation
+- `--json`: emit structured output as JSON
+
+- **Examples**:
+
+  ```bash
+  forgeloop next --json
+
+  # Explicit task selection prevents another concurrent task from
+  # becoming the implicit source of lifecycle state
+  forgeloop next --task <id> --json
+  ```
+
+---
+
+## 3. Continuity & Handoff
+
+### `continuity`
+
+Reads current operational continuity context.
+
+- **Purpose**: Retrieves the active focus, remaining items, known issues, and inspect-first notes recorded by the previous harness.
+- **When to use**: When resuming an existing task.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop continuity --json
+  ```
+
+### `record-continuity`
+
+Records operational handoff context before pausing or switching tools.
+
+- **Purpose**: Stores immediate work-in-progress notes to help the next harness continue without confusion.
+- **When to use**: Before ending a session or transferring control.
+- **Mutation**: Writes `.forgeloop/task-state/<taskKey>/continuity.json`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--focus-id <id>`: current implementation focus ID
+- `--focus-summary <text>`: current implementation focus summary
+- `--remaining <id:summary>`: remaining implementation item (repeatable)
+- `--known-issue <id:summary>`: known implementation issue (repeatable)
+- `--changed-area <path>`: changed project area (repeatable)
+- `--inspect-first <path>`: suggested inspection path (repeatable)
+- `--resume-note <text>`: bounded operational resume note
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop record-continuity \
+    --focus-id auth-jwt \
+    --focus-summary "Implement JWT refresh token rotation" \
+    --remaining "tests:Add token expiration test" \
+    --inspect-first src/auth/token.js \
+    --resume-note "Access tokens are working; refresh token rotation is in progress."
+  ```
+
+### `reconcile-continuity`
+
+Reconciles continuity with the active work state and checkout.
+
+- **Purpose**: Compares continuity bindings against the canonical work state, contract, phase, repository fingerprint, and checkout state.
+- **Lint**: Returns deterministic `PASS`/`WARN` findings for stale completed
+  item references, role conflicts, missing `inspectFirst` paths, and empty hint
+  sets without changing reconciliation classification.
+- **When to use**: When starting a session in an active task.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop reconcile-continuity --json
+  ```
+
+### `clear-continuity`
+
+Clears operational continuity context while preserving canonical work state.
+
+- **Purpose**: Removes stale or corrupt continuity handoff data when starting fresh from the last work-state checkpoint.
+- **When to use**: When continuity is unrecoverably stale or no longer relevant.
+- **Mutation**: Removes `.forgeloop/task-state/<taskKey>/continuity.json`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop clear-continuity
+  ```
+
+---
+
+## 4. Verification
+
+### `run-check`
+
+Executes a verification command with ForgeLoop-attested provenance.
+
+- **Purpose**: Runs an exact command, records the execution artifact in `.forgeloop/task-state/<taskKey>/executions/`, and binds the resulting observed check evidence to that execution through `executionRef`.
+- **When to use**: During `VERIFYING` phase to execute test suites, linters, or validators.
+- **Mutation**: Writes `.forgeloop/task-state/<taskKey>/executions/exec-*.json`, updates `.forgeloop/task-state/<taskKey>/execution-receipt.json`, appends to task ledger.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--id <id>`: stable check identifier
+- `--requirement <id>`: completion requirement covered by the check
+- `--details <json>`: additional structured check details
+- `--timeout-ms <number>`: maximum command duration before termination
+- `--scope-ref <path>`: current verification-scope.json to bind to execution evidence
+- `-- <argv...>`: exact command argv to classify, execute, and attest
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop run-check --id unit-tests --requirement "All unit tests pass" -- npm test
+  ```
+
+### `record-check`
+
+Records an observed or manual verification check result without executing commands.
+
+- **Purpose**: Records manual review evidence or external observations.
+- **When to use**: For manual reviews, accessibility inspections, or external validations.
+- **Mutation**: Updates `.forgeloop/task-state/<taskKey>/execution-receipt.json` and appends to task ledger.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--id <id>`: stable check identifier
+- `--requirement <id>`: completion requirement covered by the check
+- `--kind <kind>`: check kind (default: command; use manual-review for manual evidence)
+- `--status <status>`: passed, failed, blocked, or not-run
+- `--evidence-kind <kind>`: OBSERVED, INFERRED, NOT_VERIFIED, or BLOCKED
+- `--command <text>`: recorded only as metadata; it is never executed
+- `--result <text>`: observed result supplied by the actor
+- `--exit-code <number>`: observed process exit code
+- `--execution-ref <id>`: ForgeLoop execution artifact reference
+- `--provenance <value>`: FORGELOOP_EXECUTED, ACTOR_REPORTED, or MANUAL_OBSERVATION
+- `--details <json>`: additional structured check details
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop record-check \
+    --id manual-a11y-review \
+    --requirement "WCAG AA contrast compliant" \
+    --status passed \
+    --kind manual-review \
+    --evidence-kind OBSERVED \
+    --result "Verified contrast ratios exceed 4.5:1 across all color schemes"
+  ```
+
+### `record-diagnosis`
+
+Records an append-only diagnosis event in the lifecycle event ledger for the active cycle.
+
+- **Purpose**: Records root-cause hypotheses, failure classes, and settlement criteria for failed verification checks.
+- **When to use**: In `DIAGNOSING` phase before advancing to `CORRECTING`.
+- **Mutation**: Appends `DIAGNOSIS_RECORDED` to event ledger and updates work state projection.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--file <path>`: structured diagnostic case JSON file (mutually exclusive with legacy diagnosis fields)
+- `--hypothesis <text>`: specific root-cause hypothesis explaining the verification failure
+- `--failure-class <class>`: canonical failure class taxonomy
+- `--evidence-ref <check-id>`: reference to failed/blocked check from current cycle (repeatable)
+- `--settled-by <text>`: falsification or settlement criteria for the hypothesis
+- `--next-safe-action <text>`: smallest safe action to address the hypothesis
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop record-diagnosis \
+    --hypothesis="Off-by-one index calculation in slice function" \
+    --failure-class="VERIFICATION_FAILURE" \
+    --evidence-ref="unit-tests" \
+    --settled-by="Test returns expected slice length" \
+    --next-safe-action="Adjust offset +1 in slice.js"
+  ```
+
+### `record-intervention`
+
+Records an append-only intervention bound to hypotheses; the described change is never executed by ForgeLoop.
+
+- **Purpose**: Records corrective or experimental changes (code, config, tests, instrumentation) associated with one or more hypotheses.
+- **When to use**: In `CORRECTING` phase after a structured diagnostic case has been recorded.
+- **Mutation**: Appends `INTERVENTION_RECORDED` to event ledger.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--file <path>`: intervention JSON file describing the recorded change (never executed)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop record-intervention --task checkout --file intervention.json --json
+  ```
+
+### `record-hypothesis-disposition`
+
+Records an evidence-bound hypothesis disposition update in the lifecycle event ledger.
+
+- **Purpose**: Updates hypothesis status (SUPPORTED, WEAKENED, FALSIFIED, SUPERSEDED, UNRESOLVED) based on recorded evidence.
+- **When to use**: After new verification evidence resolves an open hypothesis.
+- **Mutation**: Appends `HYPOTHESIS_DISPOSITION_RECORDED` to event ledger.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--hypothesis <id>`: existing hypothesis ID to disposition
+- `--status <status>`: SUPPORTED, WEAKENED, FALSIFIED, SUPERSEDED, or UNRESOLVED
+- `--evidence-ref <check-id>`: check ID supporting this disposition (repeatable)
+- `--reason <text>`: evidence-bound reason for the disposition
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop record-hypothesis-disposition \
+    --task checkout \
+    --hypothesis h-timeout-latency \
+    --status SUPPORTED \
+    --evidence-ref checkout-tests \
+    --reason "Instrumented dependency time exceeded the timeout." \
+    --json
+  ```
+
+### `validate-state`
+
+Validates `.forgeloop/task-state/<taskKey>/work-state.json` structure, hash chain, and repository binding.
+
+- **Purpose**: Integrity check for work state.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop validate-state --json
+  ```
+
+### `validate-receipt`
+
+Validates `.forgeloop/task-state/<taskKey>/execution-receipt.json` schema and check references.
+
+- **Purpose**: Integrity check for completion receipt.
+- **Mutation**: Read-only.
+- **Receipt Resolution**: Without `--file`, the receipt is resolved from the task context: an explicit `--task` (or `FORGELOOP_TASK`) selects that task's namespaced receipt, otherwise a single active task is resolved automatically. `--file` overrides task-based receipt resolution and validates exactly the given relative file.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--file <path>`: receipt file relative to target (overrides task-based receipt resolution)
+- `--json`: emit structured output as JSON
+
+- **Examples**:
+
+  Validate the selected task's namespaced receipt:
+
+  ```bash
+  forgeloop validate-receipt --task task-001 --json
+  ```
+
+  Validate an explicit receipt file (`--file` overrides task-based receipt resolution):
+
+  ```bash
+  forgeloop validate-receipt --file .forgeloop/task-state/<taskKey>/execution-receipt.json --json
+  ```
+
+When no task is selected and no task descriptors exist, the legacy singleton `.forgeloop/execution-receipt.json` compatibility path is validated.
+
+### `validate-protocol`
+
+Performs comprehensive protocol validation across all active artifacts.
+
+- **Purpose**: Validates contract, route, state, receipt, executions, and event ledger freshness and consistency.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--contract-file <path>`: current JSON contract used for freshness comparison
+- `--route-file <path>`: routing-result JSON relative to target
+- `--state-file <path>`: work-state JSON relative to target
+- `--receipt-file <path>`: execution-receipt JSON relative to target
+- `--continuity-file <path>`: optional execution-continuity JSON relative to target
+- `--task-brief-file <path>`: task brief JSON file (repeatable)
+- `--delegated-result-file <path>`: delegated result JSON file (repeatable)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop validate-protocol --json
+  ```
+
+### `progress`
+
+Evaluates task progress across verification cycles and detects stalls deterministically.
+
+- **Purpose**: Evaluates whether iterative correction cycles are advancing, on watch, or stalled.
+- **When to use**: Any time during execution, verification, or diagnosis to inspect progress signals and prevent repeated ineffective retries.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit progress evaluation as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop progress --json
+  ```
+
+---
+
+## 5. Completion & Reporting
+
+### `quality-baseline`
+
+Captures the provider observation that becomes the task's structural-quality
+baseline.
+
+- **Purpose**: Persist an immutable, task-bound structural-quality baseline before execution.
+- **When to use**: After a valid preflight checkpoint in `PLANNED`, before entering `EXECUTING`.
+- **Mutation**: Executes the configured provider, writes `baseline.json`, and appends a quality-baseline ledger event.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--replace`: replace a different baseline before EXECUTING
+- `--timeout-ms <number>`: bounded analyzer timeout in milliseconds
+- `--json`: emit baseline result as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop quality-baseline --task task-001 --json
+  ```
+
+Use `--replace` only for an intentional pre-execution baseline replacement.
+The superseded fingerprint remains in the append-only ledger. The command
+does not accept an executable path, shell fragment, arbitrary arguments, score,
+or baseline value.
+
+### `quality-verify`
+
+Scans the current project through the configured structural-quality provider and
+compares it with the task baseline.
+
+- **Purpose**: Record a current-cycle structural-quality evaluation and project it into the canonical `structural-quality` check.
+- **When to use**: In `VERIFYING`, before `REVIEWING`.
+- **Mutation**: Executes the configured provider, writes a typed evaluation, and records the bound check/evidence projection.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--timeout-ms <number>`: bounded analyzer timeout in milliseconds
+- `--json`: emit structural-quality verification as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop quality-verify --task task-001 --json
+  ```
+
+`PASS`, `FAIL`, `BLOCKED`, and `NOT_OBSERVED` remain distinct. A failed,
+unavailable, malformed, timed-out, truncated, stale, or incomparable provider
+result cannot become a passing check.
+
+### `quality-status`
+
+Projects the persisted structural-quality evidence without launching a provider.
+
+- **Purpose**: Inspect baseline, current-cycle status, policy comparison, and next guidance.
+- **When to use**: At any point when a read-only quality projection is needed.
+- **Mutation**: Read-only; it creates no provider process and writes no quality artifact.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit persisted structural-quality status as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop quality-status --task task-001 --json
+  ```
+
+### `prepare-completion`
+
+Initializes or refreshes `.forgeloop/task-state/<taskKey>/execution-receipt.json`.
+
+- **Purpose**: Maps contract requirements to evidence coverage slots.
+- **When to use**: Upon entering the `VERIFYING` phase before recording checks.
+- **Mutation**: Writes `.forgeloop/task-state/<taskKey>/execution-receipt.json`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop prepare-completion --json
+  ```
+
+### `record-terminal-result`
+
+Records external publication or production-readiness observations.
+
+- **Purpose**: Records evidence for terminal requirements (e.g. git push, npm publish, staging deploy).
+- **When to use**: When the contract contains explicit publication or production-readiness requirements.
+- **Mutation**: Updates work state and receipt with terminal status.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--requirement <id>`: terminal requirement covered by the result
+- `--type <type>`: PUBLICATION or PRODUCTION_READINESS
+- `--status <status>`: observed terminal status
+- `--source <text>`: external action source (e.g. npm publish, git push)
+- `--result <text>`: observed external result description
+- `--details <json>`: additional structured result details
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop record-terminal-result \
+    --requirement release-publish \
+    --type PUBLICATION \
+    --status published \
+    --source "npm publish" \
+    --result "v1.1.0 published to registry"
+  ```
+
+- **Terminal Statuses**: The `--status` value must be one of the canonical
+  statuses for the declared `--type`:
+
+  | `--type` | Allowed `--status` values |
+  | --- | --- |
+  | `PUBLICATION` | `committed`, `pushed`, `published`, `deployed` |
+  | `PRODUCTION_READINESS` | `ready`, `blocked` |
+
+### `audit`
+
+Performs a read-only dry-run evaluation of completion readiness.
+
+- **Purpose**: Checks if all requirements are covered, ledger is valid, and fingerprints are fresh without changing lifecycle phase.
+- **When to use**: In `REVIEWING` phase before running `complete`.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--strict`: require strict protocol compliance
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop audit --json
+  ```
+
+### `complete`
+
+Validates protocol completion and transitions the task to `COMPLETE`.
+
+- **Purpose**: Authoritative protocol validation of the entire task lifecycle.
+- **When to use**: In `REVIEWING` phase when all checks have passed.
+- **Mutation**: Updates `.forgeloop/task-state/<taskKey>/work-state.json` to `COMPLETE` and records completion event.
+- **Return Status**: `VALID` or `REJECTED`.
+- **Return Dimensions**: The evaluation result reports separate dimensions alongside the return status: `taskStatus` (`COMPLETE`/`INCOMPLETE`/`BLOCKED`), `verificationStatus` (`VALID`/`invalid`), `publicationStatus`, `productionReadiness`, and `errors[]` with the concrete rejection reasons.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--strict`: require strict protocol compliance
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop complete --json
+  ```
+
+### `report`
+
+Emits an independent multi-dimensional status report.
+
+- **Purpose**: Reports task completion, publication status, and production readiness as independent dimensions.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--strict`: require strict protocol compliance
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop report --json
+  ```
+
+### `bundle`
+
+Exports a portable, self-contained task bundle.
+
+- **Purpose**: Bundles contract, route, state, receipt, executions, and ledger for archiving or cross-environment migration.
+- **Mutation**: Writes portable bundle under `.forgeloop/tasks/<taskId>`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop bundle --task task-001 --json
+  ```
+
+---
+
+## 6. Inspection & Recovery
+
+### `status`
+
+Displays human-readable or structured summary of current task state.
+
+- **Purpose**: Quick overview of task ID, phase, cycle, active guides, and completion status.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--contract-file <path>`: current JSON contract used for freshness comparison
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop status --json
+  ```
+
+### `inspect`
+
+Inspects checkout changes and compares them against contract deliverables. With `--task <id>`, human output renders a task inspection report (phase, cycle, ledger/snapshot health, progress, verification attempts, diagnostics, failure surface, signals, next command); `--json` keeps the full additive `taskInspection` section.
+
+- **Purpose**: Shows modified files, untracked files, and deliverable coverage.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--contract-file <path>`: current JSON contract used for freshness comparison
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop inspect --json
+  ```
+
+### `history`
+
+Shows chronological protocol history reconstructed from canonical ForgeLoop state.
+
+- **Purpose**: Answers "what happened during this task?" with deterministic, read-only reconstruction from the event ledger.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--type <list>`: comma-separated event types or categories to include
+- `--phase <list>`: comma-separated lifecycle phases to include
+- `--failures`: show only failed/blocked verification events
+- `--checks`: show only verification events
+- `--since <timestamp>`: include events at or after this timestamp
+- `--until <timestamp>`: include events at or before this timestamp
+- `--limit <number>`: show only the last N events after filtering
+- `--compact`: one line per event
+- `--verbose`: show full event data
+- `--json`: emit structured history output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop history --task auth-feature --json
+  ```
+
+### `trace`
+
+Emits detailed structured task trace with provenance and artifact relationships.
+
+- **Purpose**: Machine-readable protocol reconstruction consumed by history, reflect, task-level inspect, and external integrations.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured trace output as JSON (default rendering is a summary)
+
+- **Example**:
+
+  ```bash
+  forgeloop trace --task auth-feature --json
+  ```
+
+### `reflect`
+
+Analyzes diagnostic and correction history deterministically for information gain, repeated failures, ineffective interventions, and oscillation.
+
+- **Purpose**: Whole-task retrospective that reports whether the run actually learned anything, without calling an LLM.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured reflection output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop reflect --task auth-feature --json
+  ```
+
+### `policy`
+
+Evaluates compliance against a named policy pack.
+
+- **Purpose**: Checks repository conformity against organizational or protocol policy packs.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `<name>`: policy pack name
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop policy default --json
+  ```
+
+### `policy-discover`
+
+Discovers architectural patterns, project conventions, and candidate verification rules deterministically.
+
+- **Purpose**: Runs non-interactive repository inspection to derive policy rules with confidence scores.
+- **Mutation**: Read-only by default; writes `.forgeloop/policy/discovery.json` and regenerates `.forgeloop/policy/policy.lock` only with `--write`. Without `--write`, discovery is observational and persists nothing.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--write`: persist discovered policy to .forgeloop/policy/discovery.json
+- `--json`: emit structured output as JSON
+
+- **Examples**:
+
+  Read-only discovery (observational, persists nothing):
+
+  ```bash
+  forgeloop policy-discover --json
+  ```
+
+  Persist discovery and regenerate the policy lock:
+
+  ```bash
+  forgeloop policy-discover --write --json
+  ```
+
+### `policy-status`
+
+Reports effective executable policy verification status, baselines, lock integrity, and drift.
+
+- **Purpose**: Evaluates all rules, verifies `policy.lock` integrity, identifies inert checks, baselined debt, unbaselined violations, and drift against the task snapshot.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured output as JSON
+
+- **Examples**:
+
+  ```bash
+  forgeloop policy-status --json
+
+  # Evaluate drift against a specific task snapshot
+  forgeloop policy-status --task <id> --json
+  ```
+
+### `policy-diff`
+
+Semantically diffs policy rules and classifies changes as tightening, neutral, or weakening.
+
+- **Purpose**: Compares proposed or current policy against a base or task snapshot.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--before <path>`: path to before policy JSON
+- `--after <path>`: path to after policy JSON
+- `--json`: emit structured output as JSON
+
+- **Examples**:
+
+  ```bash
+  # Diff the current effective policy against the task snapshot
+  forgeloop policy-diff --task <id> --json
+
+  # Diff two explicit policy JSON files
+  forgeloop policy-diff --before .forgeloop/policy/before.json --after .forgeloop/policy/after.json --json
+  ```
+
+### `rule-verify`
+
+Runs mutation verification on policy rules to prove checkers actively detect invalid states.
+
+- **Purpose**: Validates that rule checkers fail on mutant fixtures, generating proof digests.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--rule <id>`: verify a specific policy rule ID
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop rule-verify --rule SECURITY.NO_HARDCODED_SECRET --json
+  ```
+
+### `baseline`
+
+Manages the brownfield policy baseline and monotonic ratchet-down.
+
+- **Purpose**: Records current violations into baseline, or ratchets baseline downward as debt is fixed.
+- **Mutation**: Writes `.forgeloop/policy/baseline.json` and regenerates `.forgeloop/policy/policy.lock`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--record`: record current violations as brownfield baseline
+- `--update`: ratchet baseline downward by removing resolved violations
+- `--policy-reset-authorized`: explicit operator authority to re-record baseline during active tasks
+- `--json`: emit structured output as JSON
+
+- **Examples**:
+
+  ```bash
+  # Adopt pre-existing violations as brownfield debt
+  forgeloop baseline --record --json
+
+  # Remove resolved debt (monotonic; additions are rejected)
+  forgeloop baseline --update --json
+
+  # Explicit operator authority to re-record during an active task
+  forgeloop baseline --record --policy-reset-authorized --json
+  ```
+
+During an active task bound to a policy snapshot, `--record` without
+`--policy-reset-authorized` fails with `E_BASELINE_RECORD_DURING_ACTIVE_TASK`;
+`--update` is monotonic and fails with `E_BASELINE_EXPANSION` if it would add
+debt.
+
+### `profile-interview`
+
+Optional operator-facing interview guidance (never invoked autonomously by agent).
+
+- **Purpose**: Returns optional discovery/interview guidance to help an operator inspect or refine project assumptions. It does not write `PROJECT_PROFILE.md` automatically.
+- **When to use**: Optional; never required for normal autonomous execution.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--dry-run`: show planned interview questions without changing files
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop profile-interview
+  ```
+
+### `clear-state`
+
+Clears canonical work-state checkpoint for the current task.
+
+- **Purpose**: Emergency reset of local work-state checkpoint.
+- **When to use**: Only when abandoning a task or resetting state after an unrecoverable corruption.
+- **Mutation**: Removes `.forgeloop/task-state/<taskKey>/work-state.json` only. Sibling ForgeLoop artifacts (such as contracts, routes, gates, and ledger history) are preserved.
+- **Safety Note**: This is not a full `.forgeloop/` reset command.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop clear-state
+  ```
+
+### `checkpoint-revalidate`
+
+Revalidates a safe pre-execution `ROUTED` checkpoint after repository-only
+drift.
+
+- **Purpose**: Rebinds the checkpoint to ForgeLoop's current repository fingerprint while preserving lifecycle, contract, route, guide, gate, check, and evidence identity.
+- **When to use**: When `next` returns `REVALIDATE_CHECKPOINT` with only `E_REPOSITORY_CHANGED` / `E_STATE_REVALIDATION_REQUIRED`.
+- **Mutation**: Advances the state revision and appends a transaction-bound `CHECKPOINT_REVALIDATED` event.
+- **Safety Note**: It does not accept caller-supplied repository identity, revise contracts, reroute, fabricate evidence, or operate after execution starts. Unsupported drift fails closed with `E_CHECKPOINT_REVALIDATION_UNSAFE`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured revalidation output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop checkpoint-revalidate --task <id> --json
+  ```
+
+---
+
+### `reconcile-closure`
+
+Reconciles the checkpoint of an EXECUTING, VERIFYING, or REVIEWING task whose objective is already satisfied in the current repository.
+
+- **Purpose**: Refresh the work-state repository fingerprint of a stale EXECUTING, VERIFYING, or REVIEWING task after repository movement, using executed contract-bound evidence that the objective is present, so the canonical completion pipeline can close it.
+- **When to use**: When a task is stuck in EXECUTING, VERIFYING, or REVIEWING with `E_REPOSITORY_CHANGED` / `E_STATE_REVALIDATION_REQUIRED` and its objective was already satisfied by other changes in the current repository. A REVIEWING task may use an existing authorized completion-recovery snapshot, or the narrow bootstrap path when the only drift is repository movement and no completion rejection has been persisted.
+- **Mutation**: Appends a `CHECKPOINT_RECONCILED` ledger event (previous/current repository fingerprints plus evidence) and refreshes the work-state repository fingerprint. The phase stays unchanged until the canonical pipeline advances it; claims release only through canonical `COMPLETE`.
+- **Safety Note**: Refuses other phases, fresh checkpoints, contract or required-artifact drift, invalid ledgers, invalid claim ownership, unauthorized persisted completion rejection, unknown requirements, and failing evidence. It never appends completion events or releases claims.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--id <id>`: contract verification item id used as evidence
+- `--requirement <id>`: exact contract verification item requirement text
+- `--details <json>`: additional structured execution details
+- `-- <argv...>`: exact command argv to execute as objective-satisfaction evidence
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop reconcile-closure --task <id> --id regression-tests \
+    --requirement "pack tarball test asserts the README image is excluded from the npm package" \
+    -- node --test tests/package.test.js
+  ```
+
+---
+
+## 7. Multi-Task Management
+
+### `task-create`
+
+Initializes a new isolated task namespace with write claims and contract.
+
+- **Purpose**: Creates `.forgeloop/task-state/<taskKey>/task.json` descriptor.
+- **Mutation**: Writes task descriptor.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--claim <path>`: scoped file path or directory prefix claimed for mutation (repeatable)
+- `--contract-file <path>`: path to initial contract file
+- `--preset <name>`: bounded contract preset: documentation, bug, feature, or release
+- `--preview`: preview the contract without creating lifecycle state
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-create --task task-001 --claim src/auth --json
+  ```
+
+  With an explicit initial contract file:
+
+  ```bash
+  forgeloop task-create --task task-001 --claim src/auth --claim tests/auth --contract-file task-contract.json --json
+  ```
+
+  `--contract-file` points to a contract JSON that is validated and copied into the task namespace.
+
+  Use `--preset documentation|bug|feature|release --preview` for a bounded,
+  read-only contract proposal. Preview validates claims and creates no task
+  namespace or project-claims lock; repeat without `--preview` after reviewing
+  the proposal. Presets record unresolved decisions when concrete deliverables
+  are not supplied and do not publish or deploy release artifacts.
+
+### `task-list`
+
+Lists all tasks discovered in `.forgeloop/task-state/`.
+
+- **Purpose**: Discovers tasks, their keys, phases, write claims, and lock status.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--phase <phase>`: only return tasks in this lifecycle phase
+- `--active`: only return healthy tasks with active ownership and a non-terminal phase
+- `--limit <number>`: maximum tasks to return
+- `--offset <number>`: number of sorted tasks to skip
+- `--json`: emit structured output as JSON
+
+  Results are sorted by task ID. `--phase` and `--active` filter the
+  presentation only; ownership and corruption checks still run for every
+  discovered task before filtering. `--limit` and `--offset` provide bounded
+  pagination and return `total` and `hasMore` in JSON. Listing never removes
+  ledger or recovery evidence. Discovery itself is exhaustive for valid task
+  namespaces because ownership and conflict correctness must not depend on a
+  page limit.
+
+- **Example**:
+
+  ```bash
+  forgeloop task-list --json
+  forgeloop task-list --active --limit 20 --offset 0 --json
+  ```
+
+### `task-show`
+
+Displays details of a specific task by ID or storage key.
+
+- **Purpose**: Inspects task descriptor, write claims, active lock, and lifecycle state.
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--compact`: emit a bounded task-status projection
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-show --task task-001 --json
+  ```
+
+### `task-lock-status`
+
+Reports the lock owner and lease-based staleness classification for a specific task without mutating it.
+
+- **Mutation**: Read-only.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-lock-status --task task-001 --json
+  ```
+
+### `task-scope`
+
+Updates or inspects write claims for a task.
+
+- **Purpose**: Modifies write claims before execution starts.
+- **Mutation**: Updates `task.json`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--claim <path>`: scoped file path or directory prefix claimed for mutation (repeatable)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-scope --task task-001 --claim src/auth --claim tests/auth --json
+  ```
+
+### `task-migrate`
+
+Migrates a legacy 1.0 single-task `.forgeloop/` layout into a namespaced task directory.
+
+- **Purpose**: Converts root `.forgeloop/` artifacts into `.forgeloop/task-state/<taskKey>/`.
+- **Mutation**: Moves task artifacts into task state subfolder.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: retained source and publication evidence destination
+- `--writers-quiesced`: confirm all legacy writers are stopped and excluded
+- `--dry-run`: show planned migration actions without moving files
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-migrate --json
+  ```
+
+### `migrate-protocol`
+
+Plans or applies an explicitly supported persisted-state migration to a target
+protocol version.
+
+- **Purpose**: Provides a fail-closed compatibility migration surface. In the
+  current release, target protocol `1` either needs no change or converts a
+  detected legacy singleton layout through the verified `task-migrate` flow.
+- **When to use**: Before upgrading persisted ForgeLoop state when a release
+  documents a new protocol migration. Run the dry-run first and retain the
+  resulting migration receipt after applying a legacy conversion.
+- **Mutation**: Does not write with `--dry-run`. A supported legacy conversion
+  writes the namespaced task state and its `migration-receipt.json` before
+  removing legacy artifacts.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--destination <path>`: retained source and publication evidence destination
+- `--writers-quiesced`: confirm all legacy writers are stopped and excluded
+- `--to <protocolVersion>`: target supported protocol version
+- `--dry-run`: show migration actions without writing or deleting artifacts
+- `--json`: emit structured migration result as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop migrate-protocol --to 1 --dry-run --json
+  ```
+
+### `task-unlock`
+
+Forces the release of a task lock or CAS-safely releases an unchanged stale lease.
+
+- **Purpose**: Removes `.forgeloop/locks/<taskKey>.lock` when its owner is no longer valid. Prefer `--stale-only`; `--force` is an explicit unconditional maintenance action.
+- **Mutation**: Deletes task lock file.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--force`: force release of an orphaned task lock
+- `--stale-only`: release only a lock whose lease is expired
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-unlock --task task-001 --force --json
+  ```
+
+### `task-recover`
+
+Suspends mutation and releases effective claims for a task deterministically classified `STALE` or `ABANDONED`.
+
+- **Purpose**: For a task classified only `STALE` or `ABANDONED`, persists `recovery.json` plus a linked append-only event without changing work state or fabricating completion. The canonical claim-state resolver must validate both before claims become effective-empty. `RECOVERABLE` tasks must use `reconcile-closure`.
+- **Mutation**: Transactionally writes recovery state and appends the recovery event. Historical descriptor claims and all lifecycle evidence remain intact; ordinary mutations return `E_TASK_RECOVERED`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--acknowledge-recovery`: acknowledge release of claims for a STALE or ABANDONED task (required; not host attestation)
+- `--operator-authorized`: deprecated alias for --acknowledge-recovery; does not attest operator authority
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-recover --task task-001 --acknowledge-recovery --json
+  ```
+
+`--acknowledge-recovery` is caller acknowledgement only. The deprecated
+`--operator-authorized` alias has the same semantics and is not host attestation.
+Fake, missing, corrupt, or mismatched recovery state is
+`E_TASK_CLAIM_OWNERSHIP_INCONSISTENT`/`E_TASK_RECOVERY_INCONSISTENT`; historical
+claims remain reserved.
+
+### `task-abandon`
+
+Explicitly abandons an active non-terminal task without fabricating completion.
+
+- **Purpose**: Releases validated write claims for a deliberately abandoned task while preserving its current lifecycle phase, append-only history, and durable recovery boundary. This is the canonical escape from an active-task claim deadlock; it is not a completion or publication operation.
+- **When to use**: Only when the exact task ID is known and the caller has deliberately acknowledged abandonment. Use `task-recover` only for tasks already classified `STALE` or `ABANDONED`.
+- **Mutation**: Appends `TASK_ABANDONED` and its `TRANSACTION_COMMITTED(operation=task-abandon)` witness, then writes `recovery.json` with classification `ABANDONED` and authority `CALLER_ACKNOWLEDGED`. Work state remains unchanged and claims resolve to `RELEASED_BY_RECOVERY`.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--acknowledge-abandonment`: explicitly acknowledge abandonment of an active task (required; not completion authority)
+- `--json`: emit structured abandonment output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-abandon --task task-001 --acknowledge-abandonment --json
+  ```
+
+The command requires an explicit task ID and acknowledgement. It refuses
+`COMPLETE`, already recovered, inconsistent, or non-active ownership states
+and never writes `COMPLETION_VALIDATED`. Use `task-resume` to reacquire claims
+through the normal lifecycle when work should continue.
+
+### `task-repair-contract-bootstrap`
+
+Repairs only the exact historical duplicate contract bootstrap defect.
+
+- **Purpose**: Recognizes the narrow append-only signature of a duplicate `CONTRACT_VALIDATED` followed by a duplicate `contract-create` commit, verifies the current contract and route/state bindings, and reconstructs the earliest proven checkpoint without rewriting existing events.
+- **Mutation**: Under project/task serialization, writes the reconciled work-state and appends `CONTRACT_BOOTSTRAP_REPAIR_RECORDED` plus `TRANSACTION_COMMITTED` in one transaction.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--acknowledge-repair`: explicit caller acknowledgement of the exact append-only repair (required)
+- `--json`: emit structured repair output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-repair-contract-bootstrap --task task-001 --acknowledge-repair --json
+  ```
+
+The command requires fresh caller acknowledgement. The marker records the
+repair-time checkpoint as an immutable anchor, including `reconstructedPhase`,
+`reconstructedStateFingerprint`, `reconstructedStateRevision`, and the
+repair-time `routeFingerprint`; it does not freeze the task at that checkpoint.
+The marker must be immediately followed by its
+`TRANSACTION_COMMITTED(operation=task-repair-contract-bootstrap)` witness.
+After the anchor revision, normal canonical lifecycle evolution is allowed, but
+state rollback, missing state, invalid current contract/route identity, or
+ledger/state incoherence fails closed with `E_CONTRACT_BOOTSTRAP_REPAIR_INVALID`.
+If a later route fingerprint differs from the marker, the current route and
+state must be canonically coherent and the ledger must contain a ForgeLoop-
+generated `ROUTE_REBOUND` witness immediately followed by the matching
+`TRANSACTION_COMMITTED(operation=route)`. The witness binds the current route
+fingerprint, the repair-time contract fingerprint, and the previous route
+fingerprint; a historical route transaction, or route and state fields changed
+together without this identity witness, is not authorization. A contract-only
+repair may establish its first route through canonical `runRoute`, recording a
+null previous route fingerprint. A proven `ROUTE_VALIDATED` milestone also
+requires a present, valid route artifact bound to the current contract, while a
+history without `ROUTE_VALIDATED` may repair to `CONTRACT_READY` without a
+route artifact. After repair, entering `DESIGNING` additionally requires the
+canonical `DESIGN_GATE_STARTED` event.
+
+### `task-migrate-contract-bootstrap-repair`
+
+Migrates the exact legacy contract bootstrap repair marker produced before
+`reconstructedStateRevision` was required.
+
+- **Purpose**: Proves the legacy marker, its immediate repair transaction, the current contract, the reconstructed work-state, and (for `ROUTED`) the persisted route. Strict validation remains fail-closed until the migration witness is appended.
+- **Mutation**: Appends `CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_RECORDED` plus `TRANSACTION_COMMITTED(operation=task-migrate-contract-bootstrap-repair)`; it never rewrites the legacy marker or state/contract/route artifacts.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--acknowledge-migration`: fresh explicit caller acknowledgement of the exact legacy marker migration (required)
+- `--json`: emit structured migration output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-migrate-contract-bootstrap-repair --task task-001 --acknowledge-migration --json
+  ```
+
+Only the exact legacy schema and immediate repair boundary are eligible. Any
+near-miss, later lifecycle activity, state/route drift, live lock, unknown lock,
+or corrupt lock fails closed with
+`E_CONTRACT_BOOTSTRAP_REPAIR_MIGRATION_INVALID`/`E_TASK_LOCKED`. The operation
+is idempotent only when the complete migrated relationship remains valid.
+
+### `task-resume`
+
+Reacquires a recovered task's write claims and restores ordinary mutation authority.
+
+- **Purpose**: Validates active recovery ownership, CAS-settles only an unchanged stale task lease, reuses normal claim-overlap and clean-checkout enforcement under project/task serialization, then removes `recovery.json` transactionally.
+- **Mutation**: Optionally updates historical claims in `task.json`, appends `TASK_RECOVERY_RESUMED`, and removes `recovery.json` in one transaction.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--claim <path>`: write claim to reacquire (defaults to all released claims) (repeatable)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-resume --task task-001 --claim src --claim tests --json
+  ```
+
+With no `--claim`, the command attempts to reacquire all claims recorded in the
+active recovery artifact. It returns `E_TASK_SCOPE_CONFLICT` without removing
+recovery state when another active task owns an overlapping path.
+The resume event counts as meaningful task activity. Never create, edit, or
+delete `recovery.json` manually to emulate this command.
+
+### `task-repair-legacy-recovery`
+
+Migrates one recognized legacy recovery boundary event into the modern durable recovery representation.
+
+- **Purpose**: Proves that a historical `OPERATOR_RECOVERY_RECORDED` without `recoveryId` marks the effective task boundary and materializes its modern representation as an append-only `LEGACY_RECOVERY_MIGRATION_RECORDED` event plus a transactional `recovery.json`. The original legacy event is never modified.
+- **Mutation**: Appends the migration event at the ledger tail and writes `recovery.json` in one transaction under project claims locking.
+- **Options**:
+
+- `--path <directory>`: target project directory (default: current directory)
+- `--task <id>`: task ID to operate on (when omitted, resolved from context or single active task)
+- `--acknowledge-recovery`: fresh explicit acknowledgement of the legacy boundary migration (required)
+- `--json`: emit structured output as JSON
+
+- **Example**:
+
+  ```bash
+  forgeloop task-repair-legacy-recovery --task task-001 --acknowledge-recovery --json
+  ```
+
+Only the exact known legacy signature is eligible; ambiguous, tampered, or
+post-boundary-active ledgers fail closed with
+`E_LEGACY_RECOVERY_MIGRATION_INVALID` and ownership stays INCONSISTENT. A
+`STALE` task lease is settled only through CAS-safe stale release when the
+observed lock is unchanged; `LIVE` locks refuse with `E_TASK_LOCKED`, and
+`UNKNOWN`/`CORRUPT` locks fail closed with the lock preserved — never delete a
+lock file manually to unblock this command. The repair is idempotent: an
+already repaired task returns `{repaired: 0, alreadyRepaired: true}` only when
+the whole canonical recovery relationship validates; any mismatch fails closed.
+The repair itself never releases claims directly; ownership becomes validated
+recovery state and ordinary mutation remains blocked until `task-resume`.

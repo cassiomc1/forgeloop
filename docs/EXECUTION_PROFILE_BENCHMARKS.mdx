@@ -1,0 +1,435 @@
+---
+title: "Execution-profile benchmark protocol"
+---
+
+ForgeLoop keeps execution-profile efficiency evidence separate from lifecycle
+trust. The benchmark scenarios under
+[`benchmarks/execution-profiles/`](https://github.com/cassiomc1/forgeloop/tree/main/benchmarks/execution-profiles) are
+deterministic routing specifications. They are not measurements and they do
+not authorize a performance claim by themselves.
+
+## What is measured
+
+The runner executes every scenario in these modes:
+
+| Mode | Meaning |
+| --- | --- |
+| `direct` | The direct baseline supplied by the host adapter. |
+| `forgeloopBalanced` | The normal ForgeLoop context and process presentation. |
+| `forgeloopAdaptive` | The deterministic profile resolved from the scenario, contract, and scope. |
+
+Each run records provider or host usage, runner-measured wall-clock time,
+verification outcome, verification cycles, comparable work steps, and the
+metadata needed to determine whether a comparison is valid. The runner never
+derives token counts, costs, cache values, verification results, or comparable
+steps from prompt length, elapsed time, model names, or estimates.
+
+The required reference set contains the six original scenarios plus
+`novatask-saas-landing-page`: documentation correction, static landing page,
+small bug fix, API feature, authentication change, infrastructure/release, and
+the NovaTask static SaaS landing page. NovaTask is a local HTML5/CSS3/vanilla
+JavaScript workload with no external services, authentication, secrets, or
+publication, and must resolve to `light`.
+
+Trusted efficiency comparisons require all of the following:
+
+- `PROVIDER_REPORTED` or `HOST_REPORTED` usage;
+- actual non-null token and timing values for the metric being compared;
+- `PASS` verification for both paired runs;
+- a positive comparable-step count; and
+- matching model, provider, prompt-spec fingerprint, project revision,
+  benchmark version, and environment metadata.
+
+If any condition is missing, the aggregate reports `NOT_COMPARABLE` and
+`claimsAllowed: false` for that comparison. `UNKNOWN` is a valid telemetry
+state, not a zero value. Benchmark outcomes are observational and never relax
+the lifecycle, evidence, authority, provenance, safety-floor, or completion
+requirements.
+
+## Running a benchmark
+
+The command requires a host adapter because ForgeLoop cannot create real model
+or provider measurements on its own:
+
+```bash
+npm run benchmark:profiles -- \
+  --adapter ./path/to/actual-host-adapter.mjs \
+  --runs 5 \
+  --json
+```
+
+Repetition counts are bounded by an explicit tier so the statistical purpose
+of a run set is visible in the command itself:
+
+| Tier | Runs | Purpose |
+| --- | --- | --- |
+| `smoke` | 1–3 | Fast adapter and pipeline checks; never efficiency evidence. |
+| `evidence` | 5–10 | Central-tendency comparisons (default when no tier is given: 5 runs). |
+| `tail` | 20–30 | Tail-risk and P95 stability analysis. |
+
+`--tier smoke|evidence|tail` enforces these bounds and selects the tier
+default when `--runs` is omitted. Runs outside a tier's bounds are rejected.
+Tail-stability conclusions additionally require the sample minimum described
+under tail analysis below.
+
+The adapter exports `runBenchmark(input)` and must execute the supplied
+scenario. Its result must include actual usage and verification data:
+
+```js
+export async function runBenchmark({ scenario, mode, runIndex, target }) {
+  // Execute the host's real workload here.
+  return {
+    usage: {
+      inputTokens: 120,
+      outputTokens: 80,
+      cacheReadTokens: null,
+      cacheWriteTokens: null,
+      totalTokens: 200,
+      costUsd: null,
+      model: "host-reported-model",
+      provider: "host-reported-provider",
+      source: "HOST_REPORTED",
+    },
+    promptSpecFingerprint: "sha256-or-other-host-bound-fingerprint",
+    verification: "PASS",
+    verificationCycles: 1,
+    comparableSteps: 4,
+    diagnostics: {
+      executionProfile: "light",
+      verificationCycles: 1,
+      modelTurns: 3,
+      toolCalls: 5,
+      retries: null,
+      correctionCycles: null,
+      filesRead: null,
+      filesWritten: 2,
+      contextRefreshes: null,
+      guideCount: 1,
+      guideIds: ["test"],
+      hostWarnings: [],
+      terminationReason: "COMPLETED",
+      flags: [],
+    },
+  };
+}
+```
+
+The values above are shape-only examples. They must not be copied as evidence
+unless the host actually reports them. The runner owns the elapsed-time
+measurement and derives the Git revision from the target checkout. Results
+are written under a unique run-set directory and existing history is never
+overwritten.
+
+The optional `diagnostics` object records host-observed execution detail for
+tail-risk attribution. Every field is nullable: a host must leave a value
+`null` (or omit `diagnostics` entirely) whenever it does not actually observe
+that telemetry, and must never estimate it from prompt size, elapsed time, or
+file size. `flags` may carry host-reported runaway signals from the fixed
+signal vocabulary; the aggregate additionally derives deterministic signals
+where recorded diagnostics support them.
+
+An adapter may also return host-observed context usage. ForgeLoop does not
+tokenize provider prompts. The optional shape is:
+
+```json
+{
+  "contextUsage": {
+    "source": "HOST_REPORTED",
+    "profile": "light",
+    "items": {
+      "taskContext": null,
+      "guides": null,
+      "history": null,
+      "protocolInstructions": null,
+      "repositoryContext": null,
+      "other": null
+    }
+  }
+}
+```
+
+Every item is nullable and `UNKNOWN` requires all items to remain `null`.
+Missing values are never inferred. When adaptive resolves to `light`, the
+aggregate compares complete host-reported context items with the matching
+balanced run and reports `CONTEXT_INFLATION` when light context is larger.
+This is an observational diagnostic and never blocks lifecycle completion.
+
+UI adapters may additionally return independently evaluated quality scores:
+
+```json
+{
+  "quality": {
+    "source": "EXTERNAL_REPORTED",
+    "scores": {
+      "visualQuality": null,
+      "responsiveQuality": null,
+      "accessibility": null,
+      "interactionPolish": null,
+      "requirementsCompleteness": null
+    }
+  }
+}
+```
+
+Scores are on a 0–5 scale and remain `UNKNOWN` when no external evaluator or
+host observation is available. Implementer self-ratings should not be used as
+independent quality evidence; for NovaTask, review direct and ForgeLoop
+outputs blind to execution mode before revealing the labels.
+
+## Blind UI quality finalization
+
+The runner supports an optional post-run finalization hook for adapters that
+can collect independent UI evidence:
+
+```js
+export async function finalizeBenchmark({ benchmarkVersion, records, scenarios, target, runSetId }) {
+  // Render and evaluate retained UI workspaces after all host timings finish.
+  return {
+    qualityByRunId: {
+      // Keys are the runner-owned run IDs; values use the quality shape above.
+    },
+    summary: { status: "MEASURED" },
+  };
+}
+```
+
+The runner calls this hook only after every `runBenchmark` call has returned.
+The adapter's `wallClockMs` therefore excludes browser rendering and evaluator
+latency. The finalizer may attach quality only to known runner run IDs; usage,
+timing, verification, comparable steps, context telemetry, and metadata are
+not rewritten by finalization. A finalizer must leave quality `UNKNOWN` when a
+candidate cannot be rendered or the evaluator cannot return schema-valid
+scores.
+
+The maintained Codex visual evaluator is intentionally outside ForgeLoop
+Core. It requires an explicitly supplied, already-installed Playwright runtime
+and Chromium executable, renders desktop (1440×900) and mobile (390×844)
+screenshots, blocks HTTP(S) requests, and gives the separate evaluator only
+requirements, neutral browser observations, and anonymized candidate labels.
+The evaluator receives no execution-mode labels, run IDs, source files, or
+implementer self-ratings. Its validated scores are recorded as
+`EXTERNAL_REPORTED`; this is independent observational evidence, not a human
+acceptance decision and not lifecycle authority. If the evaluator is not
+configured or fails, quality remains `UNKNOWN` and no quality-preservation
+claim is permitted.
+
+## Inspecting and validating results
+
+```bash
+npm run benchmark:profiles:summary -- --json
+npm run benchmark:profiles:check -- --json
+npm run benchmark:profiles:outliers -- --json
+```
+
+To enable the optional blind UI finalizer, provide paths to the host's
+existing Playwright and Chromium installations and a separate evaluator
+model. The benchmark does not install these resources:
+
+```bash
+FORGELOOP_BENCHMARK_MODEL=gpt-5.4-mini \
+FORGELOOP_BENCHMARK_REASONING=low \
+FORGELOOP_BENCHMARK_QUALITY_EVALUATOR=./benchmarks/evaluators/codex-cli-blind-visual.mjs \
+FORGELOOP_BENCHMARK_PLAYWRIGHT_ROOT=/absolute/path/to/playwright \
+FORGELOOP_BENCHMARK_BROWSER=/absolute/path/to/Google\ Chrome\ for\ Testing \
+FORGELOOP_BENCHMARK_EVALUATOR_MODEL=gpt-5.4 \
+npm run benchmark:profiles -- \
+  --adapter ./benchmarks/adapters/codex-cli-real-host.mjs \
+  --runs 5 \
+  --run-set codex-quality-repeat5-YYYYMMDD \
+  --output /tmp/forgeloop-benchmark-results-quality \
+  --json
+```
+
+The two evaluator processes have separate responsibilities: the
+implementation host reports actual usage and deterministic verification, and
+the read-only evaluator reports blind screenshot scores. Neither process may
+invent context-item counts, token counts, costs, cache values, or lifecycle
+state.
+
+Before a host run exists, the summary is intentionally:
+
+```json
+{
+  "status": "NOT_MEASURED",
+  "claimsAllowed": false
+}
+```
+
+Raw runs are stored below `benchmarks/execution-profiles/results/raw/` and
+recomputed aggregates below `benchmarks/execution-profiles/results/aggregate/`.
+Those recorded measurements are repository evidence and are intentionally not
+included in the core npm package. The package ships the deterministic scenario
+definitions and benchmark schemas needed to run a new measurement; the
+validator checks all scenario, raw-run, and aggregate schemas and recomputes
+aggregates from raw measurements. A changed overhead target is observable in
+the report; it is not a blocking lifecycle gate.
+
+CI can run `npm run benchmark:profiles:regression -- --json`. It reports
+`OK`, `EFFICIENCY_REGRESSION`, `NOT_MEASURED`, or `NOT_COMPARABLE`; a regression
+is a release-quality warning, not a ForgeLoop lifecycle failure.
+
+For LIGHT scenarios, the initial non-blocking objectives are P50 token
+overhead no greater than +35% and P95 token overhead no greater than +60%
+against a comparable direct baseline. These objectives never trade away
+verification quality, requirement coverage, or protocol safety.
+
+## Robust statistics and tail stability
+
+Benchmark methodology v2 reports robust variability for skewed token
+distributions. Methodology-v2 mode aggregates include, for every measured
+quantity, `count`, `average`, `minimum`, `p25`, `p50`, `p75`, `p90`, `p95`,
+`maximum`, `iqr`, `mad`, and `outlierCount`. Percentiles use linear
+interpolation; `iqr` is the interquartile range and `mad` the median absolute
+deviation around the median. Methodology-v1 aggregates keep their frozen
+historical shape.
+
+Every non-direct comparison in a v2 aggregate gains a `tail` object, `pairedRatioDiagnostics`, `pairedRuns`, and separate paired and distribution statistics:
+
+```json
+{
+  "pairedOverheadPercent": {
+    "p50": 3.5685,
+    "p95": 174.1502
+  },
+  "distributionDeltaPercent": {
+    "p50": 3.4708,
+    "p95": 13.1906
+  },
+  "pairedRatioDiagnostics": {
+    "pairCount": 20,
+    "baselineMinimum": 63298,
+    "baselineP25": 65742.25,
+    "baselineP50": 140632,
+    "lowBaselineThreshold": 84379.2,
+    "lowBaselinePairCount": 7
+  },
+  "tail": {
+    "sampleMinimum": 20,
+    "sampleCount": 20,
+    "p95TokenOverheadPercent": 174.1502,
+    "pairedOverheadP95Percent": 174.1502,
+    "distributionP95DeltaPercent": 13.1906,
+    "outlierCount": 0,
+    "status": "TAIL_REGRESSION",
+    "pairedStatus": "TAIL_REGRESSION",
+    "distributionStatus": "TAIL_ACCEPTABLE",
+    "combinedInterpretation": "TAIL_PAIRED_RATIO_SENSITIVE"
+  }
+}
+```
+
+### Paired overhead vs. distribution tail delta
+
+`pairedOverheadP95Percent` is the P95 of run-level relative overhead values (`((adaptive_i - direct_i) / direct_i) * 100`) across matched run indices. Because execution runs are independent stochastic trials, paired ratios can become very large when an individual direct baseline run finishes in an unusually low token regime (`LOW_BASELINE_TOKEN_REGIME`, defined as `directTokens < directP50 * 0.60`).
+
+`distributionP95DeltaPercent` compares the P95 values of the candidate and baseline token distributions directly (`((adaptiveP95 - directP95) / directP95) * 100`).
+
+These are distinct statistics and must not be presented as interchangeable metrics:
+
+- When a candidate distribution is genuinely heavy-tailed, `distributionP95DeltaPercent` itself exceeds the objective (`TAIL_DISTRIBUTION_REGRESSION`).
+- When the candidate distribution P95 is acceptable but paired overhead is inflated by low-baseline runs, the combined interpretation is `TAIL_PAIRED_RATIO_SENSITIVE`.
+
+```bash
+npm run benchmark:profiles:tail-analysis -- [--results <dir>] [--run-set <id>] [--json]
+```
+
+Tail status is observational and is classified as:
+
+- `NOT_ENOUGH_SAMPLES` when comparable pairs are below the sample minimum (20) or P95 telemetry is unavailable;
+- `TAIL_REGRESSION` when the P95 token metric exceeds the +60% objective;
+- `TAIL_WARNING` when the sample is sufficient but IQR outliers are present;
+- `TAIL_STABLE` / `TAIL_ACCEPTABLE` otherwise.
+
+Combined interpretation states:
+
+- `TAIL_CONSISTENT`: paired and distribution views agree;
+- `TAIL_PAIRED_RATIO_SENSITIVE`: paired P95 fails while distribution P95 passes and low-baseline pairs are present;
+- `TAIL_DISTRIBUTION_REGRESSION`: absolute distribution P95 delta exceeds the objective;
+- `TAIL_UNRESOLVED`: sample count is insufficient or evidence is incomplete.
+
+Tail status never gates lifecycle completion; it tells operators when a run
+set is large enough to trust its tail.
+
+## Outlier classification and runaway signals
+
+Token outliers are classified deterministically per scenario and mode with
+the `TOKEN_IQR_1_5` policy: a measured run whose total tokens exceed
+`Q3 + 1.5 × IQR` of that mode's measured distribution is an outlier, and at
+least 4 measured samples are required before classification. Each outlier
+record keeps the run identity, token values, `ratioToMedian`, and the
+diagnostic signals that explain it.
+
+```bash
+npm run benchmark:profiles:outliers -- [--results <dir>] [--run-set <id>] [--json]
+```
+
+The report is read-only: it never rewrites raw runs or aggregates and it
+never changes lifecycle truth. Signals come from two sources: host-reported
+`diagnostics.flags` and deterministic derivations from recorded diagnostics
+(model turns or tool calls more than double the mode median, repeated
+verification or correction cycles, retries, repeated context refreshes). An
+outlier with no recorded explanation is reported as `UNKNOWN_TOKEN_SPIKE`,
+which is an admission of missing telemetry, not an estimate. Historical
+methodology-v1 runs carry no diagnostics, so their spikes legitimately remain
+`UNKNOWN_TOKEN_SPIKE`.
+
+## Methodology versioning and historical compatibility
+
+Scenarios, runs, and aggregates carry a `benchmarkVersion`. Methodology v2
+bumps the current version to `2`; readers accept versions `1` and `2`.
+Historical v1 run sets are immutable evidence: their raw runs and stored
+aggregates are never rewritten, and recomputation reproduces the frozen v1
+aggregate shape exactly. Version checks therefore never invalidate committed
+history; a run set aggregates under the methodology its runs were measured
+with. Only new run sets recorded under methodology v2 receive robust
+statistics, tail status, outlier analysis, and diagnostics.
+
+## Host context contract
+
+The universal integration API exposes `task/context`, and the MCP adapter
+registers it as `forgeloop://task/{taskId}/context`. The projection includes
+the resolved profile, objective, deliverables, constraints, selected guide
+IDs, next action, verification requirements, and an explicit context policy:
+
+- `light`: targeted context, compact output, short planning, focused checks,
+  and lazy optional artifacts;
+- `balanced`: relevant context, standard output and planning, normal checks;
+- `full`: expanded context, deep planning, broad risk context, and expanded
+  verification when justified.
+
+Every projection also states that lifecycle phases, required gates, evidence,
+verification truth, authority, provenance, the safety floor, and validated
+completion remain unchanged. A host may omit optional presentation context,
+but it may not use `light` to skip a required lifecycle phase or gate.
+
+Historical protocol-v1 routes without profile metadata remain readable and are
+projected to the balanced compatibility profile.
+
+For UI scenarios, hosts should report independent visual, responsive,
+accessibility, interaction-polish, and requirements-completeness scores when
+an external evaluator or blind human review is available. Implementer
+self-ratings are not trusted as a substitute. NovaTask comparisons should
+hide the execution mode until this review is complete.
+
+## Schemas and source policy
+
+The machine-readable contracts are:
+
+- `schemas/execution-profile-benchmark-scenario.schema.json`;
+- `schemas/execution-profile-benchmark-run.schema.json`; and
+- `schemas/execution-profile-benchmark-aggregate.schema.json`.
+
+The source policy is intentionally narrow: provider or host observations are
+accepted for benchmark claims, while actor-reported or absent telemetry stays
+non-comparable. This is an efficiency observation boundary, not verification
+evidence and not an external publication result.
+
+## Contract signals and exclusions
+
+Profile selection reads string and structured success/verification
+requirements, including nested requirements and explicit publication or
+production-readiness types. Constraints and stop conditions describe
+boundaries and are excluded from obligation scanning. For example, a
+constraint saying “No publication” does not create a publication requirement.
+An explicit route risk remains authoritative and can still raise the safety
+floor. Profiles classify work; they do not grant execution authority.

@@ -1,0 +1,349 @@
+---
+title: "Structural Quality Feedback Loop"
+description: "ForgeLoop can optionally compare the structure of a project before and after a task. The provider is an external sensor; ForgeLoop owns the policy, evidence, lifecycle, and completion decision."
+---
+
+## 1. Purpose and boundaries
+
+Structural quality answers whether the measured dependency structure changed
+within the configured budget. It does not prove behavioral correctness,
+security, performance, accessibility, maintainability in general, or product
+quality. Tests, lint, security checks, performance checks, accessibility checks,
+review, and publication remain separate evidence dimensions.
+
+ForgeLoop persists only normalized, bounded, secret-free observations. The
+resolved project path is execution context and is not written into portable
+quality artifacts.
+
+## 2. Why structural quality is not a guide
+
+Engineering guides tell an agent how to work. A structural-quality provider
+measures the result of that work. The result is therefore a typed verification
+artifact and a canonical check, not an `ENG/` guide or a replacement for one.
+
+## 3. The five metrics
+
+Every provider observation contains integer scores from `0` through `10000`, a
+finite raw value, and a canonical bottleneck. The current Sentrux adapter maps
+these five root causes:
+
+| Root cause | Meaning in the feedback loop |
+| --- | --- |
+| `modularity` | How cleanly responsibilities and communities are separated. |
+| `acyclicity` | Whether dependency relationships remain free of prohibited cycles. |
+| `depth` | The measured dependency-level depth of the project. |
+| `equality` | How evenly structure is distributed across the measured modules. |
+| `redundancy` | The amount of repeated or structurally redundant information. |
+
+The aggregate `qualitySignal` is provider-supplied and normalized by ForgeLoop.
+ForgeLoop does not reimplement graph analysis or claim that a high signal is a
+universal software-quality score.
+
+## 4. Delta-first policy
+
+Gate decisions compare the current observation with the immutable baseline.
+By default, the aggregate budget is zero (`maxRegressionPoints: 0`), new cycles
+are forbidden (`forbidNewCycles: true`), and individual dimension budgets are
+unenforced (`null`), allowing flexible dimension trade-offs as long as aggregate
+signal does not regress. A configured dimension budget is intentional policy and
+is bound to the baseline by a policy fingerprint.
+
+The comparison also checks provider identity, measurement model (`measurementModel`),
+compatibility key (`compatibilityKey`), task/contract/route bindings, source
+material fingerprints, scan scope, provider config fingerprints, and optional
+cycle/minimum conditions. Any mismatch is incomparable; it is never treated as a pass.
+An explicit per-dimension failure fails the gate even when the aggregate signal improves.
+Architecture-rule provenance is recorded separately and does not change Structural
+Quality comparability when the measured source and provider scope are unchanged.
+
+## 5. Modes
+
+`structuralQuality` is absent by default for backward compatibility. When it is
+present, the mode is exactly one of:
+
+| Mode | Baseline and verification | Completion effect |
+| --- | --- | --- |
+| `off` | No provider lookup or quality artifacts. | None. |
+| `observe` | Records available comparisons and visible limitations. | Never blocks completion by itself. |
+| `gate` | Requires a bound baseline before execution and a comparable current-cycle pass before completion. | Missing, stale, blocked, incomparable, or failed evidence blocks the quality requirement. |
+
+An unavailable provider is `NOT_OBSERVED` in `observe` mode and `BLOCKED` in
+`gate` mode. Neither mode turns unavailable evidence into `PASS`.
+
+## 6. Configuration examples
+
+ForgeLoop configuration lives in `.forgeloop/config.json`.
+
+Recommended observation mode:
+
+```json
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "complianceMode": "standard",
+  "structuralQuality": {
+    "mode": "observe",
+    "provider": "sentrux"
+  }
+}
+```
+
+Strict gate mode with an intentional 50-point modularity budget:
+
+```json
+{
+  "schemaVersion": 1,
+  "protocolVersion": 1,
+  "complianceMode": "strict",
+  "structuralQuality": {
+    "mode": "gate",
+    "provider": "sentrux",
+    "maxRegressionPoints": 0,
+    "dimensionBudgets": {
+      "modularity": 50,
+      "acyclicity": 0,
+      "depth": null,
+      "equality": null,
+      "redundancy": null
+    },
+    "forbidNewCycles": true
+  }
+}
+```
+
+The provider name selects a registered provider only. Project configuration
+cannot select an executable, shell, arbitrary arguments, score, baseline, or
+provider-native command.
+
+## 7. Baseline and verify commands
+
+Capture the baseline after planning and before entering execution:
+
+```bash
+forgeloop quality-baseline --task <task-id> --json
+```
+
+An intentional replacement is allowed only before `EXECUTING` and retains
+supersession evidence:
+
+```bash
+forgeloop quality-baseline --task <task-id> --replace --json
+```
+
+In `VERIFYING`, evaluate the current cycle:
+
+```bash
+forgeloop quality-verify --task <task-id> --json
+```
+
+Inspect persisted evidence without starting a provider:
+
+```bash
+forgeloop quality-status --task <task-id> --json
+```
+
+The JSON envelopes preserve stable structural-quality error codes and never
+include raw MCP streams.
+
+## 8. Failure-to-diagnosis workflow
+
+When a gate evaluation fails, ForgeLoop records a failed
+`structural-quality` check with the evaluation artifact, bottleneck, all
+root-cause deltas, failed policy conditions, and stable reason codes. It does
+not invent a diagnosis. Follow the normal lifecycle:
+
+```text
+VERIFYING
+  -> DIAGNOSING  record an evidence-backed hypothesis
+  -> CORRECTING  make the scoped correction
+  -> VERIFYING   evaluate the new verification cycle
+  -> REVIEWING   only after current-cycle evidence and other checks pass
+```
+
+Use `forgeloop next --task <task-id> --json` at each boundary. A repeated
+hypothesis without new information remains subject to ForgeLoop's existing
+diagnosis and stall rules.
+
+## 9. Optional bounded optimization
+
+Optimization is advisory and disabled by default. If enabled with
+`optimization.mode: "bounded"`, ForgeLoop may recommend at most two extra
+evaluations in the current verification cycle. A passing baseline comparison
+already satisfies completion; extra evaluations are never required.
+
+The recommendation is suppressed when task scope is unavailable, stale, or
+outside effective claims. A gain below `minGainPoints` converges the advisory
+loop, and no optimization seeks a perfect `10000` score or widens the task.
+
+## 10. Provider contract and measurement model
+
+The public provider boundary is vendor-neutral:
+
+```ts
+type StructuralQualityProviderInput = {
+  projectPath: string;
+  taskId: string;
+  timeoutMs: number;
+  maxOutputBytes: number;
+};
+
+type StructuralQualityProvider = {
+  id: string;
+  detect?(input: StructuralQualityProviderInput): Promise<Detection>;
+  scan?(input: StructuralQualityProviderInput): Promise<SnapshotResult>;
+  observe?(input: StructuralQualityProviderInput): Promise<SnapshotResult>;
+  scopeBinding?(input: { projectPath: string }): Promise<ScopeBinding>;
+};
+```
+
+Providers declare `measurementModel` (such as `structural-root-causes-v1`) and
+an optional `compatibilityKey` (such as `sentrux-structural-root-causes-v1`).
+When baseline and evaluation share a compatibility key, non-breaking version
+differences between provider releases compare cleanly. Sentrux compatibility
+is explicit: the built-in adapter accepts only verified versions `0.5.5`,
+`0.5.6`, and `0.5.7`; future or malformed versions fail closed until
+explicitly verified.
+
+Runtime hosts may inject a provider through `createForgeLoopContext`. Provider
+IDs are lower-case stable names matching `^[a-z][a-z0-9-]{0,63}$`; the built-in
+`sentrux` name is reserved. Provider output is untrusted until every field is
+normalized, bounded, schema-validated, and semantically bound to the task.
+
+## 11. Sentrux MCP adapter and tool arguments
+
+Sentrux is not a ForgeLoop npm dependency. ForgeLoop never installs, upgrades,
+or selects an arbitrary Sentrux executable. The built-in adapter invokes the
+trusted command name `sentrux --mcp` through a shell-free local MCP process, requires
+  verified versions `0.5.5`, `0.5.6`, and `0.5.7`, and strictly conforms to Sentrux tool argument schemas:
+
+- `scan`: `arguments: { path: "<project-path>" }`
+- `health`: `arguments: {}`
+
+Sentrux-specific configuration (such as `.sentrux/rules.toml`) is owned
+exclusively by the Sentrux provider adapter via `scopeBinding()`. The adapter
+records its SHA-256 as `scope.architectureRulesFingerprint` for provenance, but
+the rules file is a separate Architecture Rules Sensor: changing it does not
+make unchanged Structural Quality measurements incomparable. Generic provider
+configuration remains a Structural Quality scope input and still invalidates
+incompatible observations. The core resolver never scans for a rules file and
+custom providers do not inherit this binding unless they explicitly expose their
+own `scopeBinding()`.
+
+If Sentrux is absent, preserve the resulting `NOT_OBSERVED` or `BLOCKED` state
+and follow the configured mode. Install or upgrade Sentrux only through the
+user's normal, separately authorized process.
+
+The repository includes a real-provider interoperability scenario covering the
+public baseline/verify path and an intentional `A -> B -> C -> A` cycle:
+
+```bash
+node --test tests/real-sentrux-structural-quality.test.js
+```
+
+The scenario runs when the user-managed `sentrux` executable reports a verified
+version; environments without that external executable leave the scenario
+unobserved rather than substituting a fake provider.
+
+## 12. Sentrux Free versus optional diagnostics
+
+The five scores, bottleneck, and the aggregate comparison are sufficient for a
+structural-quality pass or fail. File-level diagnostics may be unavailable in
+Sentrux Free. A missing diagnostics payload is therefore valid and remains
+`null`; it does not weaken the score comparison and does not become a fake
+diagnostic.
+
+## 13. Freshness and optional observe actions
+
+Baseline and observed `PASS`/`FAIL` artifacts must bind a stable source
+fingerprint. Unreadable files, unsafe symlinks, source drift during a scan,
+changed provider scope, and stale task bindings fail closed. `quality-status`,
+`next`, recovery, provenance, and completion reuse the same freshness
+validator and never promote a stale pass.
+
+In `observe` mode, `next` may expose baseline or verification as optional
+actions. These actions are advisory and do not spawn a provider from a
+read-only status or next-action query.
+
+## 14. Sentrux analytics are user choices
+
+ForgeLoop does not change Sentrux's global analytics preference. If the
+installed Sentrux version provides these commands, the user may inspect or
+disable analytics independently:
+
+```bash
+sentrux analytics status
+sentrux analytics off
+```
+
+Those commands are outside ForgeLoop evidence and should be run only with the
+user's own authorization.
+
+## 15. CI example
+
+CI can run the same project-local commands after initializing the task and
+configuring the provider on the runner:
+
+```yaml
+steps:
+  - run: forgeloop preflight --task $FORGELOOP_TASK --json
+  - run: forgeloop quality-baseline --task $FORGELOOP_TASK --json
+  - run: forgeloop advance --task $FORGELOOP_TASK --to EXECUTING --json
+  - run: forgeloop advance --task $FORGELOOP_TASK --to VERIFYING --json
+  - run: forgeloop quality-verify --task $FORGELOOP_TASK --json
+```
+
+Provider installation, runner identity, and remote publication are separate
+CI evidence. A green local or CI quality command does not imply a merge,
+publication, or deployment.
+
+## 16. Artifacts, locking, and projection reconciliation
+
+Quality artifacts are task-owned and have no mutable `latest.json`:
+
+```text
+.forgeloop/task-state/<taskKey>/structural-quality/
+  baseline.json
+  evaluations/
+    cycle-<cycle>-attempt-<attempt>.json
+```
+
+The baseline is immutable after `EXECUTING`. External provider scans execute
+outside the task mutation lock to prevent starvation of concurrent operations.
+Pre-scan and post-scan source material fingerprints ensure observations are
+stable against mid-scan source drift (`E_STRUCTURAL_QUALITY_SOURCE_DRIFT`).
+Provider-owned `.sentrux` configuration is excluded from source material and
+is handled only by the Sentrux scope binding. Source symlinks are rejected by
+the fail-closed fingerprint policy. Rules provenance is retained in the scope,
+but is not folded into the Structural Quality comparison fingerprint.
+If an evaluation artifact was committed but check projection was interrupted,
+subsequent verification retries automatically reconcile and repair the canonical
+receipt check without rescanning or incrementing attempt counts.
+
+Portable bundles include the baseline and evaluations required for audit.
+Bundle readers validate typed artifacts and fingerprints without rescanning
+the project or requiring Sentrux.
+
+## 17. Error-code troubleshooting table
+
+| Code | Meaning | First safe action |
+| --- | --- | --- |
+| `E_STRUCTURAL_QUALITY_CONFIGURATION_INVALID` | The structural-quality configuration is malformed or outside policy limits. | Correct `.forgeloop/config.json`, then rerun `preflight`. |
+| `E_STRUCTURAL_QUALITY_PROVIDER_INVALID` | A provider contract or normalized observation is invalid. | Inspect provider integration and rerun with the same task; do not promote the observation. |
+| `E_STRUCTURAL_QUALITY_PROVIDER_UNAVAILABLE` | The configured provider cannot be detected. | In observe mode continue with the limitation; in gate mode make the user-managed provider available. |
+| `E_STRUCTURAL_QUALITY_PROVIDER_VERSION_UNSUPPORTED` | The provider is older than the supported contract. | Use a user-authorized supported provider version. |
+| `E_STRUCTURAL_QUALITY_PROVIDER_PROTOCOL_INVALID` | MCP initialization, tool discovery, or response protocol is invalid. | Inspect the provider installation and keep the evidence blocked. |
+| `E_STRUCTURAL_QUALITY_PROVIDER_TOOL_CONTRACT_INVALID` | The provider tool schemas do not expose required argument definitions. | Ensure provider exposes valid `scan` and `health` MCP tool argument schemas. |
+| `E_STRUCTURAL_QUALITY_SCAN_FAILED` | The provider scan failed. | Diagnose the provider failure; never treat it as a pass. |
+| `E_STRUCTURAL_QUALITY_TIMEOUT` | The bounded provider deadline expired. | Inspect provider health and rerun only after the cause is understood. |
+| `E_STRUCTURAL_QUALITY_OUTPUT_LIMIT` | Combined provider output exceeded the safety limit. | Reduce provider verbosity or repair the provider; do not persist partial output. |
+| `E_STRUCTURAL_QUALITY_BASELINE_MISSING` | A gate task has no valid baseline. | Capture it in `PLANNED` after a valid preflight checkpoint. |
+| `E_STRUCTURAL_QUALITY_BASELINE_EXISTS` | A different baseline already exists. | Keep the immutable baseline, or use authorized `--replace` before execution. |
+| `E_STRUCTURAL_QUALITY_BASELINE_PHASE_INVALID` | Baseline replacement was attempted after execution began. | Repair against the existing baseline in a new verification cycle. |
+| `E_STRUCTURAL_QUALITY_BASELINE_BINDING_MISMATCH` | Baseline bindings no longer match the task inputs. | Inspect policy, route, provider scope, and source drift; do not bypass the binding. |
+| `E_STRUCTURAL_QUALITY_EVALUATION_INCOMPARABLE` | Current and baseline observations cannot be compared. | Resolve provider/version/policy/provider-scope drift and verify again; architecture-rule changes alone are informational. |
+| `E_STRUCTURAL_QUALITY_MEASUREMENT_MODEL_MISMATCH` | Measurement models differ between baseline and evaluation. | Ensure baseline and evaluation share a compatible measurement model. |
+| `E_STRUCTURAL_QUALITY_EVIDENCE_STALE` | A quality check is from an old cycle or points to stale evidence. | Run the current-cycle verification and record its canonical check. |
+| `E_STRUCTURAL_QUALITY_SOURCE_DRIFT` | Source material was mutated during provider observation. | Ensure worktree remains stable during quality scans and rerun verification. |
+| `E_STRUCTURAL_QUALITY_OBSERVATION_EPOCH_STALE` | Task state epoch changed during observation. | Re-run quality verification under the active task epoch. |
+| `E_STRUCTURAL_QUALITY_PROJECTION_INCOMPLETE` | Check projection was incomplete. | Re-run quality verification to reconcile the canonical check from the evaluation. |
+| `E_STRUCTURAL_QUALITY_REGRESSION` | The configured aggregate, dimension, cycle, or minimum policy failed. | Record a diagnosis from the evaluation evidence and correct the scoped code. |

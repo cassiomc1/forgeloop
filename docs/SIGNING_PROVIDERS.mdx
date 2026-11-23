@@ -1,0 +1,113 @@
+---
+title: "Signing Providers"
+description: "Signing providers are external authorities for ForgeLoop attestation signatures. They are separate from the provider-neutral attestation predicate and revision model."
+---
+
+## Contract
+
+```js
+{
+  detect(),
+  sign({ target, statementPath, outputPath, bundlePath }),
+  verify({ target, statementPath, bundlePath, policy })
+}
+```
+
+The `none` provider is always available and yields `VERIFIED` at most. The
+optional `sigstore` provider can produce `ATTESTED` after successful Cosign
+verification under an exact signer policy.
+
+Signing is optional and never part of the basic completion path. When an
+external signer is unavailable, times out, exits nonzero, or returns output
+over the configured bound, the result stays `VERIFIED` only when the unsigned
+attestation itself validates; a policy that requires a signature returns an
+unavailable or invalid result and never upgrades trust. A manifest, receipt,
+npm provenance signal, or platform status is not a signature.
+
+## Sigstore boundary
+
+ForgeLoop delegates signing and verification to a locally available
+Cosign-compatible executable. The provider:
+
+- uses explicit argument arrays and no shell;
+- applies a bounded timeout and output limit;
+- never logs standard error as a persisted artifact;
+- accepts an optional trusted-root path;
+- keeps identity and issuer policy outside the signed predicate;
+- returns stable unavailable, invalid, identity, and issuer error codes.
+
+The provider must use bounded stdout/stderr capture and an explicit timeout.
+Those limits protect the adapter boundary; they do not make the external
+signer trustworthy by themselves. Credentials remain in the host environment
+or signer configuration and never enter a ForgeLoop artifact, statement, or
+receipt.
+
+Example external signing command:
+
+```bash
+cosign attest-blob \
+  --statement .forgeloop/task-state/<taskKey>/attestations/statement.json \
+  --bundle .forgeloop/task-state/<taskKey>/attestations/statement.sigstore.json \
+  --yes
+```
+
+Verification uses the cosign 3 form. `verify-blob-attestation` no longer
+accepts `--statement`; it checks the DSSE envelope and the in-toto subject
+digest:
+
+```bash
+cosign verify-blob-attestation \
+  --bundle statement.sigstore.json \
+  --type <predicateType> --digest <subject sha256> --digestAlg sha256 \
+  --certificate-identity <identity> --certificate-oidc-issuer <issuer>
+```
+
+cosign does not check that the signed statement is the one being verified.
+After cosign succeeds, ForgeLoop also requires the bundle's DSSE payload to be
+exactly the attestation statement; a valid signature over a different
+statement with the same subject is `E_ATTESTATION_SIGNATURE_INVALID`. Only
+bundles with a `dsseEnvelope`, the format cosign 3 writes, can be verified.
+
+ForgeLoop never stores the private key, OIDC token, access token, or signing
+credential. A bundle file is not trusted merely because it exists.
+
+## CI signing and ForgeLoop Cloud
+
+The manually dispatched **Evidence signing** workflow
+(`.github/workflows/evidence-sign.yml`) runs from `main`. It verifies a
+committed bundle with `evidence-verify`, signs its statement keylessly with
+the workflow's GitHub Actions identity, checks that signature, and uploads it
+as a run artifact. When the repository has a `FORGELOOP_SYNC_TOKEN` secret (a
+ForgeLoop sync token for that repository, issued from the ForgeLoop Cloud
+dashboard), it also uploads the Sigstore bundle to
+`https://forgeloop.monster/api/signatures`. The dashboard then verifies it
+with the Sigstore trust root and a policy pinned to the repository's own
+workflows on its default branch. Without the secret, that step is skipped.
+The token is passed only to the steps that need it and is never printed.
+
+## Policy
+
+```json
+{
+  "provider": "sigstore",
+  "required": true,
+  "policy": {
+    "issuer": "https://token.actions.githubusercontent.com",
+    "identities": ["https://github.com/example/project/.github/workflows/attest.yml@refs/heads/main"],
+    "requireTransparencyLog": true
+  }
+}
+```
+
+Exact identity and issuer policy is required for `ATTESTED`. Broad regular
+expressions and inferred trust are not accepted. Signature verification is
+optional in ordinary local audit; a consumer can require it in range
+verification with `--require-signature`.
+
+## Extension rules
+
+KMS, HSM, enterprise PKI, and other implementations may be registered without
+changing `statement.json`. They must not redefine ForgeLoop evidence binding,
+revision coverage, trust levels, or CLI result semantics. Provider conformance
+tests must cover unavailable tools, nonzero exits, invalid signatures, policy
+mismatches, timeouts, and bounded output.

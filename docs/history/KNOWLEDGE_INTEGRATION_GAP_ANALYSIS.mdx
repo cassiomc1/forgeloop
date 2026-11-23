@@ -1,0 +1,106 @@
+---
+title: "Knowledge integration gap analysis"
+---
+
+> **Status:** Historical gap analysis. The provider-neutral advisory-context
+> boundary described here was implemented in ForgeLoop 1.10.0. Current
+> operational guidance lives in [`docs/ADVISORY_CONTEXT.md`](/ADVISORY_CONTEXT).
+
+Snapshot date: 2026-09-01
+Target package: ForgeLoop 1.8.0
+Baseline: current `main` state at review start (`a4360ac9b24b19c74171fdbac3163b892d896484`, tag `v1.8.0`)
+Task: `luna-knowledge-pr-correction-20260901-v2`
+
+This is the repository-only audit of the revised Luna knowledge-integration plan. It
+records what was reviewed, where the current system already has coverage, and
+why a concept was integrated, skipped, or deferred. The earlier plan snapshot
+was treated as context, not as a version lock; the baseline above is the
+execution baseline.
+
+## Method and boundaries
+
+The review followed this sequence:
+
+```text
+source → candidate → current canonical home → gap proof → change class → verification
+```
+
+The candidate budget stopped at 15 high-quality candidates. P0 UI candidates
+were reviewed first. System-design and software-engineering candidates were
+then checked against the existing router, execution-profile, state, evidence,
+security, performance, testing, and observability contracts. No source text,
+source examples, taxonomy, or diagrams were vendored.
+
+The execution profile was resolved as `balanced` from `auto`, with the
+accessibility and performance risk reasons preserved by the task route. The
+profile changed context depth only; it did not change lifecycle, evidence,
+authority, provenance, safety-floor, or completion semantics.
+
+Decision values are `SKIP`, `REFINE`, `EXTEND`, `ADD`, `TEST_ONLY`, `DOC_ONLY`,
+`MOVE`, `REMOVE`, and `FOLLOW_UP`. Verification classes describe the kind of
+claim a rule can support; they are not completion evidence by themselves.
+
+## Candidate matrix
+
+| Topic | Source | Current home | Coverage at baseline | Gap proof | Corroboration | Operational effect | Verification class | Context cost | Change class | Decision |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Focus order and sequential navigation | Learn UI research; WAI-ARIA APG keyboard guidance | `ENG/accessibility-eng.md` — Operable; Verification workflow | Partial: keyboard operation and visible focus were explicit, but traversal order and positive `tabindex` were not | The baseline guide had no focused rule for DOM/visual order or positive `tabindex`; a keyboard audit could therefore reach an inconsistent path without a named failure mode | [APG keyboard interface](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/); WCAG 2.4.3 and 2.4.7 | Makes keyboard traversal predictable and gives reviewers a direct check | REQUIREMENT / CHECKABLE | LOW | GUIDE_ONLY | EXTEND |
+| Focus restoration after dynamic removal | Learn UI modal research; WAI-ARIA APG dialog guidance | `ENG/accessibility-eng.md` — Leaked focus traps; Complex component protocol | Partial: move, trap, return, and background exclusion were present, but the return target was assumed to remain available | No fallback was stated for a trigger that is removed, disabled, or no longer meaningful while the dialog is open | [APG](https://www.w3.org/WAI/ARIA/apg/); WCAG 2.4.3 and 2.4.11 | Prevents focus loss after destructive, asynchronous, or route-changing dialog flows | REQUIREMENT / CHECKABLE | LOW | GUIDE_ONLY | EXTEND |
+| Dialog initial focus and inactive background | Learn UI modal research; WAI-ARIA APG dialog guidance | `ENG/accessibility-eng.md` — Operable; Leaked focus traps | Partial: focus movement and keyboard containment were present, but initial-focus intent and the lifecycle decision were not separately discoverable | The guide did not tell an implementer to choose an initial target according to the dialog task or to make the outside subtree non-interactive using the platform-equivalent mechanism | [APG dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/); WCAG 2.4.3 | Reduces focus jumps and background interaction during overlays | REQUIREMENT / CHECKABLE | LOW | GUIDE_ONLY | REFINE |
+| Composite informative visuals | Learn UI accessibility research; WAI semantics guidance | `ENG/accessibility-eng.md` — Alt text; Semantic HTML | Partial: informative images and decorative icons were covered, but a rich visual made of many DOM nodes had no single semantic-representation rule | The baseline did not define how to expose one meaningful description while hiding decorative lines, labels, or illustration fragments from the accessibility tree | [WAI-ARIA APG](https://www.w3.org/WAI/ARIA/apg/); WCAG 1.1.1 and 4.1.2 | Avoids duplicate or noisy announcements without removing meaningful information | REQUIREMENT / CHECKABLE | LOW | GUIDE_ONLY | EXTEND |
+| Code examples and status controls | Learn UI accessibility research; WAI status guidance | `ENG/accessibility-eng.md` — Dynamic feedback; Semantic HTML | Partial: live-region timing and native controls were covered, but code presentation, line-number noise, copy controls, and their status relationship were not | A code sample could satisfy the generic image/control rules while still exposing redundant line numbers or an unlabeled copy result | [WAI ARIA22 status technique](https://www.w3.org/WAI/WCAG21/Techniques/aria/ARIA22.html); WCAG 4.1.3 | Keeps examples navigable and makes copy/result feedback observable without relying on visual change | REQUIREMENT / CHECKABLE | LOW | GUIDE_ONLY | EXTEND |
+| Component state map and asynchronous outcomes | Learn UI component-state research; existing design guide | `ENG/design-code-eng.md` — semantic states; progressive-enhancement contract; `ENG/test-code-eng.md` — journey states | Partial: many states were named in separate sections, but there was no compact method for mapping only the states a component can reach | The baseline had no state-map heading that connects resting, interaction, availability, data, and async outcome states to review and testing | Existing design and test rules for states, loading, errors, and interaction feedback | Makes loading/success/error/empty and selected/expanded behavior explicit without requiring irrelevant states | CONTEXTUAL / CHECKABLE | LOW | GUIDE_ONLY | EXTEND |
+| Interrupted or retargeted motion | Learn UI toast research; existing motion rules | `ENG/design-code-eng.md` — Motion; progressive enhancement | Strong enough for this task: motion duration, easing, reduced motion, fallback, and state-transition guidance existed; no current product component exposed a proven missing behavior | No consumer or reproducible defect justified a new motion-state contract beyond the state-map refinement | Existing design motion rules and `prefers-reduced-motion` checks | No immediate operational gain over the existing guidance | HEURISTIC / CONTEXTUAL | MEDIUM | NONE | SKIP |
+| Reduced-motion distinction between ambient and essential interaction | Learn UI performance/accessibility research; WCAG 2.3.3 | `ENG/accessibility-eng.md` — Motion; `ENG/design-code-eng.md` — Motion and progressive enhancement | Strong: the guides require the preference, static alternatives, and preservation of content and action | Keyword and heading audit found equivalent coverage; adding another rule would duplicate the canonical motion contract | [WCAG animation from interactions](https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html) | No new behavior or context value at this time | REQUIREMENT / CHECKABLE | MEDIUM | NONE | SKIP |
+| Responsive reflow, viewport, and touch behavior | Learn UI craft research; WCAG reflow | `ENG/design-code-eng.md` — Web Mobile; UX checklist; `ENG/accessibility-eng.md` — Zoom and reflow | Strong: viewport, touch targets, gesture alternatives, 320 CSS px reflow, and 200% zoom were present | No consumer-specific failure or missing canonical rule was found | [WCAG reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html) | No new behavior or context value at this stage | REQUIREMENT / CHECKABLE | MEDIUM | NONE | SKIP |
+| Visual hierarchy and typography | Learn UI craft/taste research | `ENG/design-code-eng.md` — Principles, typography, layout, and review checklist; `ENG/taste-frontend-eng.md` | Strong for a general guide; subjective taste remains advisory | The source supplied inspiration, not a reproducible ForgeLoop requirement or a product-specific deficiency | Existing design tokens, hierarchy, typography, and taste boundaries | Avoids adding subjective evidence or another visual guide | SUBJECTIVE / CONTEXTUAL | MEDIUM | NONE | SKIP |
+| Progressive enhancement and perceived performance | Learn UI performance research; existing performance guide | `ENG/design-code-eng.md` — progressive-enhancement contract; `ENG/perf-code-eng.md` — measurement, assets, animation, APIs | Strong: fallback, capability checks, render cost, budgets, and real-condition measurement were already canonical | No missing principle or measured performance problem was found in this documentation-only task | Existing design/performance contracts and performance checks | No new context or benchmark need | HEURISTIC / CHECKABLE | MEDIUM | NONE | SKIP |
+| Context selection and execution-profile safety | System Design Academy discovery; current implementation | `GUIDE_ROUTER.md`; execution-profile core; `LOOP_ENGINEERING.md`; `ORCHESTRATOR_INTEGRATION.md` | Strong: deterministic signals, reason codes, exclusions, safety floor, balanced resolution, and lazy optional context were present | No false activation, unknown/duplicate failure, under-selection, or safety-floor defect was reproduced | Current router/profile implementation, profile benchmarks, and task preflight | Preserves selective context and avoids protocol churn | PROTOCOL | HIGH | NONE | SKIP |
+| State, memory, recovery, and continuity separation | System Design Academy discovery; current state model | `LOOP_SYSTEM_DESIGN.md`; `EXECUTION_STATE.md`; `PROTOCOL_INTEGRATION.md` | Strong: serialized task state, events, receipt/work-state, continuity, recovery, provenance, and freshness are separated | No path was found that lets recovery imply completion, stale evidence survive, or chat memory replace canonical state | Current state schemas, lifecycle rules, and recovery tests | No architecture change justified | PROTOCOL / EVIDENCE_CAPABLE | HIGH | NONE | SKIP |
+| Evaluation versus product verification | System Design Academy discovery; current scorecard/benchmarks | `QUALITY_SCORECARD.md`; `docs/EXECUTION_PROFILE_BENCHMARKS.md`; `LOOP_ENGINEERING.md` | Strong: process efficiency, host/provider telemetry, product verification, and completion evidence are distinct | No evidence path was found that converts subjective quality, agent report, or benchmark output into completion truth | Existing scorecard, benchmark schemas, and evidence semantics | Prevents metric inflation and preserves fail-closed completion | EVIDENCE_CAPABLE / SUBJECTIVE | HIGH | NONE | SKIP |
+| Retries, idempotency, concurrency, and distributed edges | System Design Academy discovery; performance/security/test guides | `ENG/clean-code-eng.md`; `ENG/perf-code-eng.md`; `ENG/sec-code-eng.md`; `ENG/test-code-eng.md`; protocol durable-action rules | Strong for the current reusable guidance: timeouts, cancellation, backpressure, idempotency, retry budgets, cache isolation, queues, webhooks/WebSockets, and test boundaries are already represented | No active implementation consumer or reproducible gap justified deeper topic-specific guidance; expanding now would increase context without changing a decision | Existing canonical guides and durable-action contracts | Revisit only with a concrete system consumer, schema, benchmark, or failure case | CHECKABLE / PROTOCOL | HIGH | NONE | FOLLOW_UP |
+
+## Decisions and write set
+
+The proven gaps are small documentation gaps, not missing runtime capabilities:
+
+- Extend `ENG/accessibility-eng.md` with focus order, focus lifecycle fallback,
+  dialog initial-focus intent, composite visual semantics, and code/status
+  semantics.
+- Extend `ENG/design-code-eng.md` with a compact, context-sensitive component
+  state-map rule that connects reachable states to interaction and review.
+- Keep the test guide unchanged because its existing keyboard, focus, state,
+  reflow, reduced-motion, manual-evaluation, and evidence-boundary rules are
+  sufficient for these guide-only changes.
+- Keep `GUIDE_ROUTER.md`, execution profiles, protocol files, schemas, and
+  evidence vocabulary unchanged. No new evidence ID or preflight gate is
+  justified.
+- Keep this gap analysis as a repository-only research audit and exclude it
+  from the npm package because it is task-specific and would add shipped
+  context without runtime value.
+- Keep the source ledger as permanent, packaged provenance documentation
+  because it records the licensing boundary and prevents repeating the same
+  source review.
+
+The final guide wording is independently formulated. The Learn UI material is
+research-only because reuse permission was not confirmed. System Design
+Academy is discovery-only because its repository declares `CC BY-NC-ND 4.0`.
+Objective accessibility rules are corroborated with W3C/WAI/APG references.
+
+## Verification plan
+
+The selected changes are `GUIDE_ONLY` plus documentation inventory updates.
+They require documentation checks, focused semantic inspection, and a
+negative-first diff review. They do not require profile benchmarks, router
+fixtures, schema tests, protocol regressions, or executable product tests
+because no runtime or protocol behavior changes.
+
+The review must continue to reject these false conclusions:
+
+- a guide statement is not completion evidence;
+- a screenshot is not proof of visual quality;
+- an agent report is not independent process execution;
+- a status-region rule is not proof that assistive-technology testing occurred;
+- a balanced profile does not authorize skipping lifecycle or evidence gates;
+- a recovery artifact, stale result, or committed file does not imply
+  completion.

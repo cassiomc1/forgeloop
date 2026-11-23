@@ -1,0 +1,548 @@
+---
+title: "ForgeLoop Release Checklist"
+description: "This is the current release checklist for the PolyForm Noncommercial-licensed @cassiomc1/forgeloop package. It is a preparation and verification checklist; it does not authorize publication."
+---
+
+## Stable 2.5.0 candidate — 2026-11-20
+
+`2.5.0` is a minor release of the core package.
+
+- **Protocol:** `docs/PROTOCOL_SPEC.md` is normative, with a 25-case
+  conformance suite and an Apache-2.0 independent verifier.
+- **Completion:** a contract verification item whose latest bound check
+  failed blocks completion (`E_CHECK_FAILED`).
+- **Attestation:** predicate schema version 2 binds every recorded check;
+  verifiers report execution assurance and accept `--min-assurance`.
+- **Delegation:** `evidence-verify --brief` accepts a delegate's work only on
+  evidence.
+- **Ticket contracts:** `contract-create --from-ticket` starts a task from a
+  contract approved in ForgeLoop Cloud.
+
+Its runtime change is bound by
+[`stable-2.5.0-writer-review.json.gz`](https://github.com/cassiomc1/forgeloop/blob/main/benchmarks/storage-sqlite/stable-2.5.0-writer-review.json.gz),
+a delta review against 2.4.0: three changed filesystem modules with
+dispositions, one new module without filesystem access, and one added
+confined read.
+
+Publish from the merged release commit with `npm-publish.yml`
+(`confirm: PUBLISH PUBLIC PACKAGE`, dist-tag `latest`), then verify:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.5.0 --release-commit <release-tag-commit>
+```
+
+The independent verifier is published separately from `verifier/` as
+`@cassiomc1/forgeloop-verify` 1.0.0.
+
+## Stable 2.4.0 candidate — 2026-11-19
+
+`2.4.0` is a minor release of the core package.
+
+- **Tests:** the test landmine allowlist is empty. One suite-wide runner
+  timeout bounds every test, fixed sleeps became awaited conditions or one
+  shared deadline-bounded poller, and the `node:fs/promises` module mock is
+  gone.
+- **Runtime:** `syncDirectory` accepts an optional `openDirectory`; without
+  it, behaviour is unchanged.
+- **Evidence signing:** the workflow uploads verified Sigstore bundles to
+  ForgeLoop Cloud when the repository has `FORGELOOP_SYNC_TOKEN`.
+- **Audit:** ForgeLoop Audit lives in ForgeLoop Cloud.
+
+Its runtime change is bound by
+[`stable-2.4.0-writer-review.json.gz`](https://github.com/cassiomc1/forgeloop/blob/main/benchmarks/storage-sqlite/stable-2.4.0-writer-review.json.gz),
+a delta review against 2.3.1: one changed module with a disposition, and
+every one of the 491 filesystem bindings identical to 2.3.1.
+
+Publish from the merged release commit with `npm-publish.yml`
+(`confirm: PUBLISH PUBLIC PACKAGE`, dist-tag `latest`), then verify:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.4.0 --release-commit <release-tag-commit>
+```
+
+## Stable 2.3.1 publication — 2026-11-19
+
+`2.3.1` is a patch release of the core package. It makes Sigstore signing
+work with real `cosign`:
+
+- attestation statements are plain in-toto Statement v1 documents (cosign
+  rejected the extra top-level `schemaVersion`);
+- verification uses cosign 3 `verify-blob-attestation` with `--type`,
+  `--digest` and `--digestAlg`, then requires the signed DSSE payload to equal
+  the statement.
+
+The Evidence signing workflow ran the same cosign signing and cosign 3
+verification commands on GitHub Actions (run 44432197043); the core
+provider's verification is covered by tests with in-toto and DSSE fixtures.
+
+Its runtime changes are bound by
+[`stable-2.3.1-writer-review.json.gz`](https://github.com/cassiomc1/forgeloop/blob/main/benchmarks/storage-sqlite/stable-2.3.1-writer-review.json.gz),
+a delta review against 2.3.0: 2 changed modules with dispositions, and 2 added
+read-only `readFile` bindings in `src/core/signing/sigstore.js`.
+
+Published from tag `v2.3.1` (commit `f934e85137ae2692861d9887e3667d4d31b21983`)
+through `npm-publish.yml` with trusted OIDC publishing:
+
+- npm `latest` is `2.3.1`;
+- `dist.integrity` is
+  `sha512-hiCHGW8gdvF10SAQDgflxzDfonmKbjO3IVFlvhB+00PxIireq5328WpCF6oZinTu7E58KM8DiACMfMjrU6SG3w==`;
+- the provenance statement is in the Sigstore transparency log (index
+  3986378561);
+- `release:identity` returns `RELEASE_IDENTITY_VALID`.
+
+npm `next` still points to `2.3.0`; the owner moves it with
+`npm dist-tag add @cassiomc1/forgeloop@2.3.1 next`. ForgeLoopAudit no longer
+vendors the core: the Audit moved to ForgeLoop Cloud after this release.
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.3.1 --release-commit <release-tag-commit>
+```
+
+## Stable 2.3.0 publication — 2026-11-18
+
+`2.3.0` is a minor release of the core package.
+
+- **Automatic evidence:** with attestation mode `required`, `complete`
+  exports the evidence bundle automatically and, with the `sigstore`
+  provider, signs it.
+- **New commands and options:** the opt-in `evidence-publish` command with an
+  offline queue, and `sync-pull --merge`, a task-level three-way merge.
+- **New error codes:** `E_SYNC_MERGE_CONFLICT`, `E_EVIDENCE_PUBLISH_CONFIG`
+  and `E_EVIDENCE_PUBLISH_UNAUTHORIZED`.
+
+Its runtime changes are bound by
+[`stable-2.3.0-writer-review.json.gz`](https://github.com/cassiomc1/forgeloop/blob/main/benchmarks/storage-sqlite/stable-2.3.0-writer-review.json.gz),
+a delta review against 2.2.0:
+
+- 13 changed and 4 added modules each have a disposition.
+- The 9 added filesystem bindings write only a user-config queue
+  (`evidence-publish`) or private OS temp staging (`sync-pull --merge`).
+  The live store changes only through existing transaction writers or
+  `storage-restore`.
+
+Published from tag `v2.3.0` (commit `8655d4288e1bf6cba307a2e0981627db8117c12c`)
+through `npm-publish.yml` with trusted OIDC publishing:
+
+- npm `latest` is `2.3.0`;
+- `dist.integrity` is
+  `sha512-cIWgbmYpgs8aNqbPpVlRZvVCfEwX76SB9jbPCICQ0pNxr+REGygcFHuS6pIoZT0ptSPrbcKHXTrW+HG9sVKYtA==`;
+- the provenance statement is in the Sigstore transparency log (index
+  3971716082);
+- `release:identity` returns `RELEASE_IDENTITY_VALID`;
+- ForgeLoopAudit vendors this exact archive, with schema copies regenerated
+  from `v2.3.0`.
+
+Windows, rollback drills, hosted parity and registry-user audits are recorded
+as not repeated or post-publication. Re-check the published identity with:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.3.0 --release-commit <release-tag-commit>
+```
+
+## Stable 2.2.0 publication — 2026-11-16
+
+`2.2.0` is a minor release of the core package. It adds `forgeloop assess`,
+`evidence-export` and `evidence-verify` with ledger metrics, and the cloud-sync
+`sync-push` and `sync-pull` commands, with their error codes. Its runtime
+changes are bound by
+[`stable-2.2.0-writer-review.json.gz`](https://github.com/cassiomc1/forgeloop/blob/main/benchmarks/storage-sqlite/stable-2.2.0-writer-review.json.gz),
+a delta review against 2.1.0:
+
+- Every changed module keeps identical filesystem bindings.
+- 23 added bindings, all in new modules, each have an explicit role.
+- `sync-pull` is a tenth explicit maintenance-admission command; a test proves
+  that it leaves a project under retained maintenance unchanged.
+
+Published from tag `v2.2.0` (commit `8b472a2fff30034a5d23a9a380250136930b5e67`)
+through `npm-publish.yml` with trusted OIDC publishing: npm `latest` is `2.2.0`,
+`dist.integrity` is
+`sha512-UOCK/KJGUjsiQrpFmMwrFz1haoWKhbWlQ/aELO6Use0py+0fl+z7l75LOnN0m94j1C0jU3f6YjagwMcXmhAB2A==`,
+the provenance statement is in the Sigstore transparency log (index
+3937130126), and `release:identity` returns `RELEASE_IDENTITY_VALID`.
+ForgeLoopAudit vendors this exact archive. Windows, rollback drills, hosted
+parity and registry-user audits are recorded as not repeated or
+post-publication. Re-check the published identity with:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.2.0 --release-commit <release-tag-commit>
+```
+
+## Stable 2.1.0 publication — 2026-11-14
+
+`2.1.0` is a minor release of the core package (the published error registry
+gains every emitted code, 159 of them as `PUBLIC_UNCLASSIFIED`). Its runtime
+changes are bound by
+[`stable-2.1.0-writer-review.json.gz`](https://github.com/cassiomc1/forgeloop/blob/main/benchmarks/storage-sqlite/stable-2.1.0-writer-review.json.gz),
+a delta review against 2.0.0 with identical filesystem bindings and an explicit
+disposition for every changed, added and removed module.
+`scripts/check-release-channel.mjs` selects the review by exact package version
+and never falls back to an earlier report.
+
+Published from tag `v2.1.0` (commit `bbf0f2a30d356812834c85098179250f07d78842`)
+through `npm-publish.yml` with trusted OIDC publishing: npm `latest` is `2.1.0`,
+`dist.integrity` is
+`sha512-Kcv3h+k8SUVfohiHOHsvgaXwf8OitwDn6f62Mgm5hu3TKR7WKTOHhuLAf5q+oKPmzZ33pJDP3iXBhOJyCyrRKg==`,
+the provenance statement is in the Sigstore transparency log (index
+3890066512), and `release:identity` returns `RELEASE_IDENTITY_VALID`.
+ForgeLoopAudit vendors this exact archive. Hosted parity, native Windows, rollback drills and
+registry-user audits from 2.0.0 are not carried forward as evidence for these
+bytes; the review records them as not repeated or post-publication. Re-check
+the published identity with:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm run release:identity -- --version 2.1.0 --release-commit <release-tag-commit>
+```
+
+## Stable 2.0.0 publication — 2026-10-18
+
+The published core package is `2.0.0` on npm `latest`, with Node.js
+24.19.0+ and built-in `node:sqlite`. The MCP companion retains restricted
+distribution and admits the stable core peer. Canonical SQLite is the sole
+supported operational writer; configuration, portable exports, immutable
+attachments and owner-bound maintenance evidence retain explicit file roles.
+
+The [release acceptance record](/STABLE_2_ACCEPTANCE) identifies source-bound
+writer review, full verification, accepted final-source hosted parity, native
+candidate and actual unversioned registry-user checks. Trusted publication and
+release identity are verified. Its retained evidence separates the supported
+writer boundary from physical power-loss, privileged external writers and
+production cutover. Future releases require fresh exact-source checks; earlier
+receipts are not evidence for changed runtime bytes.
+
+Verify the live registry and immutable release identity after publication:
+
+```bash
+npm view @cassiomc1/forgeloop version dist-tags --json
+npm view @cassiomc1/forgeloop@2.0.0 gitHead dist.integrity --json
+npm run release:identity -- --version 2.0.0 --release-commit <release-tag-commit>
+```
+
+## Historical RC4 release evidence
+
+- [RC4 verification and publication](https://github.com/cassiomc1/forgeloop/actions/runs/38629809865)
+  passed full release checks and published with provenance.
+- [Exact-version npm audit](https://github.com/cassiomc1/forgeloop/actions/runs/38638055749)
+  passed 15/15 checks on each native Windows, macOS and Linux host.
+- [Default latest-install audit](https://github.com/cassiomc1/forgeloop/actions/runs/38669237414)
+  installed the unversioned public package with a fresh npm cache,
+  configuration, install prefix and project; all 15 checks passed on each OS.
+  Those results describe RC4, not a later stable package.
+
+The published RC4 npm `gitHead` and immutable `v2.0.0-rc.4` tag identify
+`d05c17cddda6a09581d526732b08eb0789b9734f`. The RC3 tag is retained; its
+publication was cancelled before npm publication.
+
+## Runtime corrections after RC2
+
+RC3 and later candidates with runtime changes require fresh full repository
+verification and the clean-user audit on Windows, macOS and Linux. The bounded
+source-equivalence shortcut below applies only to RC1 and RC2. Stable SQLite
+acceptance remains separate; a passing new-user audit does not change
+`soleSQLiteWriter` or authorize a stable 2.x release. Candidates publish to
+`next` under the existing release-channel policy.
+
+The `Published npm new-user SQLite audit` workflow supports `candidate`, `npm` and
+`latest` package sources. Before a PR, test the packed candidate in an isolated
+installation, home directory and project on each platform. After publication,
+dispatch the same workflow with source `latest` and the exact expected new version.
+The `latest` mode installs the unversioned package with fresh home, cache, npm
+configuration, install prefix and project directories. It retains registry
+metadata alongside the observed audit report. Use `npm` for a separate exact-version
+control. Require
+every check to pass, including both bundled companion integrity checks, live
+Jev health, concurrent task creation,
+SQLite integrity, current-cycle review diagnosis/correction, and a completed-task
+backup restored to a fresh directory.
+Supply `FORGELOOP_NPM_AUDIT_JEV_KEY` through GitHub Actions secrets and remove
+temporary credentials after the runs finish.
+
+## Historical bounded 2.0.0-rc.2 publication
+
+The owner approved short verification and an RC fallback on 2026-10-13. This
+candidate is published to npm `next`. The owner subsequently authorized moving
+`latest` to the existing RC2 through a guarded tag-only promotion. Publishing a
+new stable version remains blocked while `soleSQLiteWriter` is false. A release candidate does not assert completed
+migration acceptance or production readiness.
+
+After npm rejected restricted RC1 publication with `E402`, the owner authorized
+public core-package access. RC2 preserves the immutable RC1 tag; the MCP
+companion is not published and retains restricted access.
+
+`npm run release:quick` is the RC PR and publishing check. Each check group has
+an enforced three-minute timeout; timeout or failure refuses release. It runs
+source equivalence, writer inventory drift detection, essential SQLite boundary
+and package-policy tests, lint, dependency policy, documentation conformance,
+packed CLI/API/MCP smoke checks, hygiene, and secret scanning. This approved RC
+path replaces a new local `verify:prepush` run. It does not replace the ordinary
+or stable-release validation policy.
+
+`scripts/check-rc-release.mjs` requires all 593 runtime/schema/integration files
+to match baseline `14008f58f8ad255692997ce3fff359591fb695d1`. Root package
+metadata may change only its RC version, the three approved RC scripts, and owner-authorized public access.
+Resolved dependency locks must be unchanged apart from local package versions;
+MCP metadata may only admit the explicit RC peer and bind the local core version.
+Changed runtime or dependency bytes refuse this fast path.
+
+The baseline Windows full-suite receipt is GitHub run `38483385848`, successful
+on that exact source. Publishing verifies its repository, workflow, source SHA,
+and completed success status through the authenticated GitHub API. Current
+Linux/packaged smoke and local macOS short checks are separate evidence. No new
+full-coverage, full-platform, physical power-loss, or statistically qualified
+p95 result is claimed by the short path. The existing 1,000-task parity run
+`38483369676` is retained for review; no fresh 200-repeat benchmark is dispatched.
+
+The writer inventory covers every current `src` JavaScript module and records
+imports plus potential write sites. At that historical RC checkpoint, alias, computed-path, external-caller, and
+transitive-authority review remained incomplete. The inventory explicitly keeps
+`wholeConsumerClosure: false`; it prevents drift and does not authorize setting
+`soleSQLiteWriter` to true.
+
+RC release sequence: reviewed PR checks pass, merge preserving baseline
+ancestry, tag `v2.0.0-rc.2`, dispatch `npm-publish.yml` with channel `next` and
+confirmation `PUBLISH PUBLIC PACKAGE`, then verify npm version, Git commit,
+tarball integrity, and provenance. Stable publishing retains full checks and
+additionally refuses incomplete sole-writer acceptance.
+
+## Owner-authorized default-channel promotion
+
+Publishing a new release candidate still uses `next`. Moving an already
+published candidate to `latest` is a separate owner-authorized tag operation;
+it neither republishes the package nor changes the immutable Git tag.
+The owner authorized RC4 after its cross-platform npm audits passed.
+
+For that explicitly authorized RC4 operation, authenticated npm CLI access
+was used:
+
+```bash
+npm dist-tag add @cassiomc1/forgeloop@2.0.0-rc.4 latest
+npm view @cassiomc1/forgeloop dist-tags --json
+```
+
+npm may require separate browser/security-key verification for login and
+for the tag mutation. Credentials belong in npm's authentication flow,
+never documentation, Git or task artifacts. Confirm the registry result
+before reporting success. The version remains an RC; promotion does not
+establish stable SQLite acceptance or production readiness.
+
+The RC2-bound `promote-latest` operation and its promotion script were retired
+after the stable 2.0.0 publication; `npm-publish.yml` now only publishes.
+
+## ForgeLoop 2.0.0 candidate scope
+
+A stable 2.0.0 publication requires the source-bound acceptance record and final
+release-source checks. The preparation checklist below is not itself a pass;
+retain exact evidence for each applicable requirement.
+
+The 2.0.0 candidate carries the SQLite storage transition alongside the
+existing protocol, routing, provider, documentation, and package surfaces. The
+existing checklist remains applicable to those surfaces; SQLite release
+acceptance additionally requires every item below:
+
+- [ ] All plan §9 acceptance rows are current for the exact candidate SHA,
+      including an accepted 1,000-task hosted parity run with exact output,
+      validated workers, clean observer admission, cleanup, and lower native
+      p95 for both operations.
+- [ ] Plan §10 consumer closure is complete and `soleSQLiteWriter` is true
+      based on source audit and tests; fail-closed migration boundaries remain
+      in place until that evidence exists.
+- [ ] Migration, crash recovery, legacy-unbound handoff, attachment recovery,
+      backup, restore, rollback, and SQLite integrity checks pass on the exact
+      candidate.
+- [ ] Required Linux, macOS, Windows, supported Node runtime, MCP, API, and
+      package workflows pass at the exact candidate SHA.
+- [ ] Release identity and npm version availability are verified, and the
+      matching tag workflow completes its verification job before publishing.
+
+- [ ] README catalog and architecture fallback identify
+      `ENG/flutter-development-eng.md` and explain that the specialist is
+      selected only from a structurally parsed
+      `dependencies.flutter.sdk: flutter` entry in affected scope.
+- [ ] README catalog and architecture fallback identify
+      `ENG/rust-development-eng.md` and explain that the specialist is
+      selected only from a structurally parsed `[package]` or `[workspace]`
+      table in an affected `Cargo.toml`.
+- [ ] README catalog and architecture fallback identify
+      `ENG/nodejs-backend-development-eng.md` and explain that Node.js
+      backend/runtime evidence is distinct from build, test, and configuration
+      tooling executed under Node.js.
+- [ ] README catalog and architecture fallback identify the C, C++, Java, SQL,
+      Go, TypeScript, PHP, and Swift specialists and explain their bounded
+      structural evidence and same-root composition rules.
+- [ ] `LOOP_SYSTEM_DESIGN.md` explains project detection as routing context,
+      not verification or completion evidence.
+- [ ] Positive clean-room package routing selects `flutter`, `clean`, and
+      `test` for a Flutter root.
+- [ ] Documentation-only mentions, lockfiles, hosted packages, malformed
+      dependency shapes, symlink traversal, and unrelated monorepo roots do
+      not activate the Flutter specialist.
+- [ ] [`docs/REPOSITORY_INDEX.md`](/REPOSITORY_INDEX) and
+      [`docs/PERSISTENT_SEARCH_TRANSPORT.md`](/PERSISTENT_SEARCH_TRANSPORT)
+      agree on tgrep management, no-fallback behavior, local IPC, ownership,
+      bounded recovery, privacy, and derived-state semantics.
+- [ ] All package-shipped documentation indexes and the package file list
+      include the persistent transport reference.
+- [ ] Lifecycle, evidence, completion, and publication remain independent of
+      Repository Index and persistent-host health.
+
+This checklist does not authorize publication by itself. The owner authorized
+conditional npm publication through the GitHub workflow; the action remains
+prohibited until every release gate passes. Tagging, GitHub Release,
+deployment, and live data migration remain separate actions.
+
+## CI minimization validation
+
+- [ ] `npm run skill:check` passes and generated Skill frontmatter, protocol
+      synchronization, safety boundaries, and package coverage remain valid.
+
+- [ ] `npm run verify:fast` passes for edit-time feedback.
+- [ ] `npm run repository:hygiene` passes: no tracked mutable ForgeLoop state,
+      unexpected root reports, orphan visual assets, unapproved benchmark run
+      sets, or scratch outputs.
+- [ ] The documentation manifest and review matrix cover every maintained and
+      packaged document with origin, currency, package, action, and canonical
+      source metadata.
+- [ ] Diagram source, generated output, receipts, and review bindings are
+      current; a changed source is not approved until its visual review is
+      renewed.
+- [ ] `npm run verify:prepush` passes before the release pull request; MCP
+      setup, when needed, was run explicitly with `npm run mcp:setup`.
+- [ ] Ordinary PR validation uses `.github/workflows/pr-core.yml` with the
+      unchanged required contexts `audit`, `CodeQL`, `Documentation
+      validation`, `validate (22)`, `tarball smoke (ubuntu-latest)`, and
+      `dependency-review`.
+- [ ] `validate (22)` is always present and fails closed on an applicable
+      prerequisite failure, cancellation, or unexpected skip.
+- [ ] Path classification scenarios cover README-only, ordinary source,
+      Repository Index, package-export, and forced release validation.
+- [ ] Main-branch documentation, Node compatibility, package smoke, audit,
+      and Windows full-suite workflows remain available for broader validation.
+
+## Contract and package identity
+
+- [ ] `package.json` and `package-lock.json` contain the same package version.
+- [ ] The package metadata declares the intended license
+      (`PolyForm-Noncommercial-1.0.0`), includes the official license text,
+      and retains public core-package publication access.
+- [ ] `PROTOCOL_VERSION` and the integration API version remain compatible.
+- [ ] `npm run release:identity` passes for the candidate version.
+- [ ] No release tag or registry version collision exists.
+- [ ] `npm pack --dry-run` contains the required scenario definitions but no
+      raw or aggregate benchmark results, Ripwire benchmark runner/cases/
+      fixtures, tests, local state, or repository metadata.
+- [ ] [`docs/PACKAGE_CONTENTS.md`](/PACKAGE_CONTENTS) matches the current
+      `package.json` file list and documents intentional inclusions and
+      exclusions.
+- [ ] The candidate tarball includes every registered specialist guide and every
+      other `src/config/guides.json` path; no repository-only guide state is
+      packaged.
+- [ ] Every maintained `src/**/*.js` module is present in the candidate
+      tarball; no runtime module is excluded.
+
+## Protocol and attestation
+
+- [ ] `protocol-info` and the Integration API capability contracts agree.
+- [ ] `canonicalHandoffs` v2 is advertised consistently.
+- [ ] `advisoryContextProviders` v1 is advertised consistently.
+- [ ] `providerExtensions` v1 is consistent, provider-neutral, experimental,
+      and retains false lifecycle/completion/evidence authority.
+- [ ] Generic provider registry export remains absent and auto-install remains
+      false.
+- [ ] Advisory context remains Integration-API-only.
+- [ ] OpenSrc requires an explicit absolute executable path and lazily qualified expected version.
+- [ ] OpenSrc cache remains outside the target project and returned source paths are containment-validated.
+- [ ] OpenSrc recall remains advisory, non-evidence, and non-persisted by ForgeLoop.
+- [ ] No OpenSrc binary or cache ships in npm.
+- [ ] Optional Agent Browser uses a host-supplied absolute executable, has no
+      runtime dependency, and keeps browser observations non-authoritative.
+- [ ] Optional Emulated Services uses a host-supplied absolute `0.11.2`
+      executable, has no runtime dependency or PATH discovery, bounds argv
+      execution/readiness/output/cleanup, keeps state outside the target, and
+      returns observation-only loopback results.
+- [ ] Optional Security Review is host-injected through `securityReviewProviders`,
+      has no auto-install or scanner discovery, and keeps findings
+      observation-only, non-evidence, non-lifecycle, and non-completion.
+- [ ] Security Review request/result bounds, strict snapshot validation,
+      shared timeout, and cooperative cancellation are covered by focused tests
+      and the public TypeScript declarations.
+- [ ] `next`, `status`, and `task/context` invoke zero advisory providers.
+- [ ] Advisory request budgets are normalized before provider invocation.
+- [ ] Advisory results are never persisted by ForgeLoop.
+- [ ] Same-consumer handoff acceptance is idempotent.
+- [ ] Different-consumer handoff acceptance fails closed.
+- [ ] Concurrent acceptance creates one `HANDOFF_ACCEPTED` event.
+- [ ] Clean HEAD/branch drift rejects handoff acceptance.
+- [ ] Stale contract/route identity rejects handoff creation or acceptance.
+- [ ] An invalid event ledger projects `INCONSISTENT`.
+- [ ] Continuity lint remains non-authoritative and non-evidence.
+- [ ] `npm run dependency:policy` passes with only the approved exact
+      `@typesafe-ai/sdk` and `smol-toml` runtime dependencies and approved
+      development dependencies.
+- [ ] `npm run lint` passes.
+- [ ] `npm test` passes.
+- [ ] `npm run benchmark:profiles:check` passes; absent provider/host history
+      is reported as `NOT_MEASURED`, never as zero or a passing efficiency claim.
+- [ ] `npm run benchmark:profiles:regression` reports the observed status;
+      `EFFICIENCY_REGRESSION` remains a non-blocking warning.
+- [ ] `npm run benchmark:profiles:outliers` and
+      `npm run benchmark:profiles:tail-analysis` report the observed
+      `TOKEN_IQR_1_5`, paired-ratio, and distribution-tail results without
+      conflating `pairedOverheadPercent` with `distributionDeltaPercent`.
+- [ ] Historical v1 run sets remain byte-for-byte immutable while v2 run sets
+      carry robust statistics, low-baseline diagnostics, and explicit tail
+      interpretations.
+- [ ] `npm run coverage` passes the configured global and critical-module gates.
+- [ ] `npm run docs:check`, `npm run docs:generated:check`,
+      `npm run docs:conformance`, and `npm run docs:examples:check` pass.
+- [ ] `npm run completions:check` and `npm run summary:check` pass.
+- [ ] Workspace binding, handoff, responsibility, verification scope, revision,
+      manifest, statement, signature, and range-coverage tests pass.
+- [ ] Required attestation mode never leaves a task durably `COMPLETE` without
+      its code manifest.
+- [ ] Read-only attestation verification does not write task state or ledger
+      events.
+
+## Integration and cross-platform evidence
+
+- [ ] `npm run pack:check` and `npm run pack:smoke` pass.
+- [ ] `npm pack --dry-run` includes the Flutter guide, Repository Index
+      runtime/manifest/docs, and excludes native release binaries and derived
+      `.forgeloop` index data.
+- [ ] The npm publication workflow runs `npm run pack:smoke` before its
+      provenance-backed publish step.
+- [ ] `npm run mcp:test` either runs the configured MCP tests or reports the
+      single actionable setup prerequisite.
+- [ ] `npm run mcp:pack:check` passes when MCP dependencies are available.
+- [ ] Repository Index provider-neutral CLI, Integration API, and MCP
+      surfaces expose the same normalized result and status contracts.
+- [ ] The checked-in tgrep manifest passes archive and executable checksum/
+      version validation for every supported platform, with no placeholder
+      hashes or `latest` URL.
+- [ ] Matrix CI runs the real pinned tgrep artifact on Linux, macOS, and
+      Windows; native setup/start/status/search/live-watcher, crash-recovery,
+      migration, differential, and stop tests are green with no continue-on-
+      error path.
+- [ ] `doctor` reports an unhealthy mandatory Repository Index instead of
+      silently falling back to `rg`, `grep`, or `PATH` discovery.
+- [ ] Generic CI verification uses explicit provider, base, and head revisions.
+- [ ] Windows full-suite evidence is green on the main branch when scheduled.
+- [ ] Frozen Python 3.9+ validators pass with `python3 -m unittest discover -s tests`.
+- [ ] Secret scanning and Markdown validation pass.
+
+## Publication boundary
+
+- [ ] The exact validated commit is the release source.
+- [ ] GitHub Actions remain immutably pinned and use least-privilege permissions.
+- [ ] The npm workflow retains trusted OIDC publishing and explicit provenance.
+- [ ] The publication workflow fails closed when the candidate npm version
+      already exists or the package inspection finds forbidden paths.
+- [ ] Publication is performed only by the authorized release workflow.
+- [ ] Post-publication registry, tag, checksum, and release identity checks pass.
+
+Local package creation, a successful validation run, or a signed ForgeLoop
+attestation does not by itself prove npm publication or production deployment.

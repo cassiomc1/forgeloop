@@ -1,0 +1,159 @@
+---
+title: "Core npm package contents"
+---
+
+This page describes the intentional boundary of the publicly distributed
+`@cassiomc1/forgeloop` package. The [`files`](https://github.com/cassiomc1/forgeloop/blob/main/package.json) list in
+`package.json` is the packaging source of truth, while the repository's
+`tests/package.test.js` and clean-room `scripts/package_smoke.mjs` checks keep
+the boundary executable. Those test files are repository tooling and are not
+part of the consumer tarball.
+
+## Consumer surface
+
+The package exposes the `forgeloop` executable from `src/cli.js` and the
+`@cassiomc1/forgeloop/integration` subpath from `src/integration.js`, with its
+declaration file. The package has the approved exact `@typesafe-ai/sdk`
+dependency for the pinned semantic decision plane and `smol-toml` for bounded
+Cargo manifest parsing. It requires Node.js 24.19.0 or newer with built-in
+`node:sqlite`, matching `package.json#engines`. The MCP companion retains
+restricted distribution.
+
+## Included files
+
+The public package includes the Jev decision-plane documentation and bounded
+diagnostic scripts:
+
+- `docs/JEV_BENCHMARKS.md`
+- `docs/MODEL_ROUTING.md`
+- `docs/SEMANTIC_DECISION_PLANE.md`
+- `docs/TEST_INTELLIGENCE.md`
+- `docs/TEST_PRUNING.md`
+- `scripts/jev-smoke.mjs`
+- `scripts/benchmark-jev.mjs`
+- `scripts/benchmark-test-intelligence.mjs`
+- `schemas/context-plan.schema.json`
+- `schemas/semantic-decision.schema.json`
+- `schemas/test-utility.schema.json`
+
+The published tarball includes the following consumer-facing groups:
+
+- **Runtime and protocol:** every maintained JavaScript module under `src/`,
+  the guide registry, protocol templates, JSON schemas, completions, and the
+  generic CI verifier. The four retired compatibility helpers that 2.0.0
+  excluded (`cli-metadata`, `decision-classification`, `gates`,
+  `workflow-compatibility`) were removed from `src/core` in 2.1.0.
+  This includes the provider-neutral Repository Index runtime and its pinned
+  `src/repository-index/tgrep-manifest.json`; native engine binaries are
+  provisioned outside the npm tarball.
+- **Specialist guidance:** every registered consumer guide under `ENG/`,
+  including `ENG/flutter-development-eng.md`,
+  `ENG/dotnet-aspnetcore-development-eng.md`,
+  `ENG/nodejs-backend-development-eng.md`,
+  `ENG/rust-development-eng.md`, and the C, C++, Java, SQL, Go, TypeScript,
+  PHP, and Swift specialists, ships with the guide registry and is resolved
+  from package-local paths. Specialists are selected only from their bounded
+  structural primary evidence; SQL remains a scoped host-project overlay.
+  ASP.NET Core and ABP are conditional routing overlays on the `dotnet` guide,
+  not additional package guides. The package does not install or invoke
+  framework, compiler, build, package-manager, or database tooling.
+  `docs/GUIDE_MAINTENANCE.md` ships the full catalog maintenance map and
+  revalidation boundaries; it does not add automatic Python routing or new
+  lifecycle gates.
+- **Initialization material:** the root protocol and integration documents,
+  the PolyForm Noncommercial license, third-party notices, the target profile template, and every path listed by
+  `src/core/templates.js`. These files are read by `init` and `update`, so
+  they are part of the executable consumer contract even when a document is
+  marked deprecated in the documentation manifest.
+- **Benchmark inputs:** execution-profile scenario definitions and their
+  README. They make new measurements reproducible; historical measurements
+  and generated results are repository evidence and are excluded.
+  Repository Index query inputs and benchmark instructions are also shipped;
+  generated local repositories and measurements are not.
+- **User documentation:** the getting-started, integration, CLI, artifact,
+  Repository Index, Persistent Search Transport, troubleshooting, release,
+  package-boundary, and related reference pages, together with the
+  machine-readable documentation and protocol indexes and `CONTRIBUTING.md`.
+   The advisory-context, Ripwire, OpenSrc, Agent Browser, and Audit UX guides ship with
+   the corresponding public integration surface.
+   Provider architecture, provider reference, and Security Review provider
+   documentation are also packaged.
+   The generated portable ForgeLoop Agent Skill and `docs/AGENT_SKILL.md` are
+   packaged as instruction/documentation content, not runtime authority.
+   The optional Cloudflare companion at `skills/security-audit/` also ships,
+   including its upstream references, schema, validators and tests, MIT
+   license, and `PIN.json`. Its usage guide at `docs/SECURITY_AUDIT_SKILL.md`
+   and offline `scripts/verify-security-audit-skill.mjs` checker are packaged.
+   It adds no runtime dependency or automatic scan and is not copied by
+   `init`/`update` into host skill directories.
+  Provider implementation modules ship under `src/`, but packaged source file
+  does not mean a supported public import path; the generic `./providers`
+  subpath remains unexported.
+  The lifecycle recovery surface includes the explicit `task-abandon` command;
+  it releases validated claims without asserting completion or publication.
+- **Release tooling:** the selected deterministic generators, validators,
+  benchmark helpers, and shell completions needed by maintainers who consume
+  the source kit.
+
+## Excluded files
+
+The tarball intentionally omits repository-only material:
+
+- tests, conformance fixtures, coverage output, and secret-scanning helpers;
+  Harness-specific Agent Skill installation directories and Skill caches are
+  not packaged.
+- local `.forgeloop` state, task ledgers, locks, transactions, and execution
+  receipts; the target `.forgeloop/.gitignore` is generated from an inline
+  runtime template and no `.forgeloop/*` files are packaged;
+- raw or aggregate benchmark results, package archives, and release train
+  contracts;
+- the Ripwire retrieval benchmark runner, cases, and fixture corpus; those
+  maintainer-only files require a clean repository checkout and are not part of
+  the consumer adapter surface;
+- historical release plans and retired MCP adapter sources; the MCP adapter
+  is published as its own package;
+- the repository-only README hero assets
+  `docs/assets/forgeloop-architecture.png` and its source
+  `docs/assets/forgeloop-architecture.svg`. The PNG is referenced by the
+  repository README; both are intentionally outside the core tarball.
+- the execution PoC, its audit, and its evidence package. Packaged README and
+  index links to this repository-only material use GitHub URLs so they remain
+  truthful for npm consumers.
+
+The package test checks all registered guide paths and these exclusion classes. It
+also enumerates `src/**/*.js` and fails if a maintained runtime module is
+missing from the candidate tarball.
+The repository index remains a catalog: links from `DOCS_INDEX.md` to tests,
+historical plans, and source trees may intentionally resolve only in the full
+repository and are not package dependencies. The canonical documentation and
+protocol indexes are included in the tarball.
+
+## Verification and publication
+
+Run the following checks from a clean checkout before opening a release PR:
+
+```bash
+npm pack --dry-run --json
+npm run pack:check
+npm run pack:smoke
+```
+
+`pack:smoke` installs the candidate tarball into a temporary consumer and
+exercises the CLI, public Integration API, initialization, schemas, and the
+Structural Quality documentation's packaged diagram references. The
+package-boundary tests also assert
+that every registered guide path, including all language specialists, is
+present in the candidate. The manual, explicitly authorized publication workflow runs the same smoke
+gate before `npm publish --provenance --access public`.
+Publication therefore remains owned by the authorized manual GitHub Actions
+workflow and uses public npm access for the core package; local package inspection proves the
+candidate boundary but does not publish it.
+
+## Optional product design companion
+
+The generated ForgeLoop skill includes the maintained
+`skills/forgeloop/references/revenue-centric-design/` reference tree. It ships
+a focused skill, local journey playbook, complete custom source-available
+license and integrity pin. `docs/REVENUE_CENTRIC_DESIGN.md` and
+`scripts/verify-revenue-design-skill.mjs` describe and verify it. Upstream media
+and updater scripts are excluded; external theme references are pinned links.

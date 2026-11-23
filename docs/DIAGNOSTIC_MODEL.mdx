@@ -1,0 +1,182 @@
+---
+title: "ForgeLoop Diagnostic Model"
+description: "Canonical reference for structured diagnostic cases, interventions, and hypothesis dispositions (ForgeLoop 1.6.0+, Protocol v1 additive)."
+---
+
+## Principles
+
+1. **Observation is not hypothesis.** Observations are bounded statements grounded in recorded evidence. Hypotheses are falsifiable claims that may explain observations.
+2. **Hypothesis is not proof.** Statuses are `OPEN`, `SUPPORTED`, `WEAKENED`, `FALSIFIED`, `SUPERSEDED`, `UNRESOLVED`. ForgeLoop never emits `ROOT_CAUSE_CONFIRMED` or similar.
+3. **Append-only truth.** Diagnostic revisions are never rewritten; the ledger records evolving understanding.
+4. **Diagnostic prose is metadata.** Statements, settlement predicates, and next-safe-action text are never executed by ForgeLoop.
+
+## Structured diagnostic case
+
+One diagnostic revision for one verification cycle, recorded with:
+
+```bash
+forgeloop record-diagnosis --task <id> --file diagnostic-case.json --json
+```
+
+Legacy flag-based `record-diagnosis` syntax remains valid; both forms cannot be combined.
+
+Schema: `schemas/diagnostic-case.schema.json`. Bounded limits: 64 observations, 64 contributors, 32 hypotheses per case; statements up to 4096 characters; IDs match `^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$`.
+
+### Semantic fingerprint
+
+`diagnosticFingerprint` hashes the canonicalized semantic content (cycle, failure class, observations/contributors/hypotheses semantics, next-safe action). Whitespace, key ordering, unordered reference arrays, and object IDs are excluded. Re-recording a semantically identical case is idempotent.
+
+### Revisions
+
+`diagnosticRevision` starts at 1 and increases monotonically per cycle. Each revision binds `previousDiagnosticFingerprint` to the prior active revision.
+
+## Interventions
+
+Recorded in `CORRECTING` phase:
+
+```bash
+forgeloop record-intervention --task <id> --file intervention.json --json
+```
+
+Interventions bind to at least one recorded hypothesis and carry a semantic fingerprint used to detect repetition without information gain.
+
+## Hypothesis dispositions
+
+```bash
+forgeloop record-hypothesis-disposition --task <id> \
+  --hypothesis h-timeout-latency --status SUPPORTED \
+  --evidence-ref checkout-tests --reason "..." --json
+```
+
+Allowed transitions: `OPEN → {SUPPORTED, WEAKENED, FALSIFIED, SUPERSEDED, UNRESOLVED}`, `SUPPORTED → {WEAKENED, FALSIFIED, SUPERSEDED}`, `WEAKENED → {SUPPORTED, FALSIFIED, SUPERSEDED}`.
+
+## Diagnostic precedence
+
+One canonical resolver backs every lifecycle gate, `next`, `progress`, and reflection:
+
+1. latest valid structured diagnostic case (`DIAGNOSTIC_CASE_RECORDED`) for the active task/cycle;
+2. latest valid legacy diagnosis (`DIAGNOSIS_RECORDED`) for the active task/cycle;
+3. none.
+
+Structured diagnosis is therefore a first-class protocol-native diagnostic source: a task using only `record-diagnosis --file` can traverse `DIAGNOSING -> CORRECTING -> VERIFYING` without any legacy event, and no duplicate legacy event is synthesized. Legacy diagnosis remains fully valid as a compatibility input.
+
+## Hypothesis state projection
+
+Hypothesis status is projected forward from append-only chronology (case creation in `OPEN`, then each disposition validated against the last effective projected state) — never re-read from the source case. Terminal states (`FALSIFIED`, `SUPERSEDED`, `UNRESOLVED`) do not transition unless a future protocol revision explicitly allows reopening. Invalid transitions fail closed with `E_HYPOTHESIS_DISPOSITION_INVALID`. `trace`, `reflect`, and continuity `openHypotheses` all consume this same projection.
+
+## Evidence binding
+
+Structured cases require at least one hypothesis; `CHECK_RESULT` observations must resolve to a real check from the active verification cycle; a `VERIFICATION_FAILURE` case must bind at least one hypothesis or observation to failed/blocked evidence from the active cycle. Revision chains are revalidated at read time (`revision N.previousDiagnosticFingerprint == revision N-1.diagnosticFingerprint`).
+
+## Effective gain definition
+
+Effective Information Gain exists when a diagnostic cycle changes a meaningful
+semantic dimension of the verified engineering state:
+
+```text
+new observation        new contributor       new hypothesis
+new evidence           hypothesis disposition hypothesis elimination
+failure signature      failure surface        intervention semantics
+strategy
+```
+
+All of these participate in `effectiveGain`. Semantic noise — new IDs,
+timestamps, property order, whitespace-equivalent paraphrases — never does.
+
+## Classification vs effective gain
+
+The compatibility classification (`FIRST_DIAGNOSIS`, `NEW_HYPOTHESIS`,
+`NEW_EVIDENCE`, `NEW_HYPOTHESIS_AND_EVIDENCE`, `NONE`) intentionally does not
+encode every v2 dimension. A cycle can therefore report:
+
+```text
+classification = NONE
+failureSurfaceChanged = true
+effectiveGain = true
+```
+
+`effectiveGain` is computed once from the final dimensions by the authoritative
+cycle analysis projection; consumers (progress, reflect, next, inspect,
+continuity) must not recompute or post-mutate it.
+
+## Stall policy (fail-fast)
+
+A structured diagnostic state is **stalled** when its latest comparable
+diagnostic state has no effective information gain. There is no two-cycle
+threshold: one no-gain comparison blocks another blind correction retry with
+`E_DIAGNOSIS_NO_NEW_INFORMATION`, and progress/reflect/next/inspect expose the
+same condition. The first diagnosis is never stalled. High correction-cycle
+count alone remains advisory (`WATCH`), never `STALLED`.
+
+Stall is not terminal: recording a diagnostic with meaningful new information
+(a new observation, contributor, evidence, hypothesis change, and so on)
+clears it immediately. Strategy oscillation (`A -> B -> A`) keeps the more
+specific `INTRODUCE_NEW_OBSERVATION` guidance over generic no-gain guidance.
+Historical repetition metrics remain available as reflective explanation
+(`stallAnalysis`) but do not change the stall decision. Semantic noise — new IDs,
+timestamps, property order, whitespace-equivalent paraphrases — never counts as
+gain or as hypothesis elimination.
+
+## Failure surface evolution
+
+Every canonically verified cycle appears in failure surfaces, including
+successful ones:
+
+```text
+cycle 2 ["lint"]
+cycle 3 []        <- explicit empty successful cycle, direction REDUCED
+```
+
+A full reduction to `[]` classifies the preceding intervention as `IMPROVED`.
+
+## Intervention repetition
+
+```text
+repeatedSemanticIntervention
+  = the same intervention semantic fingerprint was recorded before
+
+NON_INFORMATIVE
+  = later verification produced no meaningful semantic change
+```
+
+Recording an intervention returns `repeatedSemanticIntervention` plus
+`effectiveness: "PENDING"`. Only a subsequent completed verification cycle can
+classify `IMPROVED | REGRESSED | INFORMATIVE | NON_INFORMATIVE`.
+
+## Continuity diagnostic context
+
+```json
+{
+  "activeFailureSignatures": ["<sha256-like canonical fingerprint>"],
+  "activeFailedRequirements": ["auth-tests"],
+  "openHypotheses": [],
+  "latestIntervention": null,
+  "nextExperiment": null,
+  "doNotRepeat": []
+}
+```
+
+`activeFailureSignatures` contains canonical `computeFailureSignature` hashes
+scoped to the active verification cycle; requirement names are exposed
+separately in `activeFailedRequirements`.
+
+## Structured case hypothesis invariant
+
+At least one hypothesis is mandatory: `hypotheses.minItems = 1` is enforced
+identically by the JSON schema, the runtime validator, ledger validation, and
+the record-diagnosis command path.
+
+## Information gain
+
+Compatibility values (`FIRST_DIAGNOSIS`, `NEW_HYPOTHESIS`, `NEW_EVIDENCE`, `NEW_HYPOTHESIS_AND_EVIDENCE`, `NONE`) remain valid. Structured dimensions add observation/contributor/hypothesis novelty, disposition changes, failure-signature change, failure-surface change, and intervention change. New IDs, timestamps, whitespace, paraphrases, and identical reruns never constitute gain.
+
+## Stall and oscillation
+
+- High correction-cycle count alone is advisory (`WATCH`), never `STALLED`.
+- Strong stall requires identical failure signature, strategy, contributors, hypotheses, surface, and no new evidence across consecutive cycles. Two consecutive correction cycles without effective gain under the same strategy reach `STALLED` (`REQUIRE_NEW_DIAGNOSTIC_INFORMATION`).
+- Repetition of an intervention is not automatically non-informative: effectiveness (`PENDING | IMPROVED | REGRESSED | INFORMATIVE | NON_INFORMATIVE`) is classified only after subsequent verification. Continuity `doNotRepeat` requires semantic repetition AND at least two completed post-intervention verification cycles AND unchanged failure surface.
+- Oscillation (`A→B→A`) surfaces as `OSCILLATING_STRATEGY`; `next` recommends `INTRODUCE_NEW_OBSERVATION`.
+
+## Capability discovery
+
+`forgeloop protocol-info --json` advertises `features.diagnostics`, `executionHistory`, `structuredTrace`, `taskInspection`, and `reflection`.

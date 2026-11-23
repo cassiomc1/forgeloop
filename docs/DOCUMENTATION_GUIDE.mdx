@@ -1,0 +1,308 @@
+---
+title: "ForgeLoop Documentation Guide"
+description: "This guide explains how to maintain, write, and safely modify ForgeLoop documentation."
+---
+
+---
+
+## 1. Canonical Ownership Model
+
+ForgeLoop strictly separates normative protocol definitions from operational documentation to avoid contradictory rules.
+
+| Area | Location | Responsibility | Rule |
+| --- | --- | --- | --- |
+| **Normative Protocol** | Root (`LOOP_ENGINEERING.md`, `PROTOCOL_INTEGRATION.md`, `LOOP_SYSTEM_DESIGN.md`, `THREAT_MODEL.md`, `EXECUTION_STATE.md`) | Canonical authority for protocol rules, schemas, state transitions, and security | Never duplicate normative rules in sub-documents; link back to root files. |
+| **Operational & Reference** | `docs/` (`GETTING_STARTED.md`, `CROSS_HARNESS_CONTINUITY.md`, `CLI_REFERENCE.md`, `ARTIFACT_REFERENCE.md`, `TROUBLESHOOTING.md`, `RECIPES.md`, `REPOSITORY_INDEX.md`, `PERSISTENT_SEARCH_TRANSPORT.md`) | Tutorials, command reference, handoff workflows, repository search, transport behavior, and troubleshooting | Explains how to operate the system. Links to normative sources for formal specifications. |
+| **Domain Engineering** | `ENG/` (`clean-code-eng.md`, `design-code-eng.md`, `test-code-eng.md`, etc.) | Domain-specific implementation and quality standards | Frontmatter must adhere to `validate_loop_system.py` standards. |
+| **Consumer Documentation Quality** | [`ENG/documentation-quality-eng.md`](https://github.com/cassiomc1/forgeloop/blob/main/ENG/documentation-quality-eng.md) | Quality standards for documentation work in projects using ForgeLoop | Governs client/consumer project documentation tasks via guide routing. |
+| **Documentation Index** | `DOCS_INDEX.md` | Single repository index and ownership map | Updated whenever documentation structure changes. |
+
+---
+
+## 2. Documentation Source-of-Truth Rules
+
+When updating documentation, always derive content from its authoritative source:
+
+```text
+CLI syntax truth        -> CLI registry / parser (src/cli.js, src/core/cli-command-definitions.js)
+Artifact shape truth    -> JSON schemas (schemas/*.schema.json, src/core/artifact-registry.js)
+Lifecycle truth         -> protocol / state machine (src/core/protocol.js)
+Reason-code truth       -> exported protocol constants (src/core/error-codes.js, src/core/protocol.js)
+Guide registry truth    -> canonical guide registry (src/config/guides.json)
+Package contents truth  -> package.json + docs/PACKAGE_CONTENTS.md + package tests (tests/package.test.js)
+Documentation routing   -> DOCS_INDEX.md
+Integration API truth   -> src/integration.js (exports, envelope, limits, risk classes, resources)
+MCP behavior truth      -> integrations/mcp/src/* and integrations/mcp/package.json
+MCP package boundary    -> MCP package tests + scripts/mcp-package-smoke.mjs
+Repository Index truth  -> src/repository-index/*, CLI definitions, Integration API, and MCP resource registry
+Persistent transport truth -> src/persistent-transport/*, CLI search dispatcher, and transport tests
+```
+
+Operational documentation must explain canonical behavior, not redefine it.
+
+For the 23 engineering guides, use the
+[guide maintenance map](/GUIDE_MAINTENANCE). Check activation descriptions
+against the detector/router and frontmatter requirements before changing a
+guide. Keep contextual styling and optional tools separate from lifecycle
+gates; do not update review dates on untouched material.
+
+Terminology must remain consistent across active documents: say “advisory
+context,” not “canonical memory”; “handoff acceptance,” not “ownership
+transfer”; and “operational receipt,” not “delegation.” Advisory output is
+never canonical state, evidence, authority, completion truth, or next-action
+authority. `consumerId`, harness names, recipient hints, and transport labels
+are descriptive values rather than authenticated identity or authority.
+
+Documentation-impact questions for integration/MCP changes:
+
+- Did a server mode or capability gate change?
+- Did an MCP transport change?
+- Did an adapter error code change?
+- Did an integration limit or resource list change?
+
+Anti-drift invariant: every packaged Markdown or harness-adapter document in
+`package.json.files` is registered in `documentation-manifest.json`, and every
+`packaged: true` manifest entry is mechanically checked against the core npm
+tarball contents (`tests/package.test.js`). The review matrix records generated
+or handwritten origin, current or historical status, package inclusion, action,
+and canonical sources for every registered document.
+
+### Documentation retention and repository hygiene
+
+Use one canonical owner for each maintained concept. Generated documentation
+must name its source, generator, freshness check, and reason for being tracked.
+Historical audits, release evidence, and completed validation records belong
+under `docs/history/`; current operating instructions must not leave those
+records loose in the repository root. One-off plans and validation reports are
+either consolidated into a canonical document and deleted or moved to the
+history index with their current owner links.
+
+Repository and npm decisions are separate. GitHub may retain reproducible
+benchmarks, PoC evidence, and historical records that consumers do not need. The npm package
+ships only intentional runtime, integration, legal, harness, and canonical user
+documentation surfaces. `npm run repository:hygiene` enforces explicit root,
+tracked-state, visual-ownership, benchmark-run-set, and scratch-output policy;
+it does not guess whether an arbitrary document is useful.
+and `WORK_TRANSITIONS`; do not maintain independent hand-written transition
+enums when a generated or mechanically validated representation is available.
+
+---
+
+## 3. Generated Documentation Provenance & Pipeline
+
+ForgeLoop mechanically enforces documentation freshness using deterministic generator targets. If public facts change and documentation regions are not refreshed, CI fails.
+
+```text
+runtime facts
+    ↓
+canonical registries / schemas
+    ↓
+deterministic generators (scripts/generate_documentation_reference.mjs)
+    ↓
+generated Markdown regions (<!-- BEGIN FORGELOOP GENERATED: ... -->)
+    ↓
+semantic conformance checks (scripts/validate_documentation_conformance.mjs)
+    ↓
+documentation validation (.github/workflows/docs.yml) and the PR aggregator
+(.github/workflows/pr-core.yml)
+```
+
+### Provenance Mapping Table
+
+| Fact Category | Canonical Machine Source | Generated Target File | Generated Region Marker |
+| --- | --- | --- | --- |
+| **Artifact Inventory** | `ARTIFACT_REGISTRY` (`src/core/artifact-registry.js`) | `docs/ARTIFACT_REFERENCE.md` | `` |
+| **Artifact Fields** | `schemas/*.schema.json` | `docs/ARTIFACT_REFERENCE.md` | `` |
+| **CLI Command Index** | `CLI_COMMAND_DEFINITIONS` (`src/core/cli-command-definitions.js`) | `docs/CLI_REFERENCE.md` | `` |
+| **CLI Common Options** | `CLI_COMMAND_DEFINITIONS` (`src/core/cli-command-definitions.js`) | `docs/CLI_REFERENCE.md` | `` |
+| **CLI Command Options** | `CLI_COMMAND_DEFINITIONS` (`src/core/cli-command-definitions.js`) | `docs/CLI_REFERENCE.md` | `` |
+| **Work-State Transitions** | `WORK_PHASES` / `WORK_TRANSITIONS` (`src/core/protocol.js`) | `ORCHESTRATOR_INTEGRATION.md` | `` |
+| **Public Error Codes** | `PUBLIC_ERROR_CODES` (`src/core/error-codes.js`) | `docs/TROUBLESHOOTING.md` | `` |
+
+### Maintenance Workflow
+
+Whenever CLI definitions, schemas, or error codes change:
+
+```bash
+# 1. Regenerate all deterministic documentation regions
+npm run docs:generate
+
+# 2. Run the test suite (includes parser parity and unit tests)
+npm test
+
+# 3. Verify freshness and semantic conformance
+npm run docs:check
+```
+
+Do not hard-code inventory totals in prose or headings. Counts of commands,
+schemas, fields, and public codes are derived from the registries and schemas;
+when those sources change, regenerate the reference documents and let the
+conformance checks detect omissions.
+
+---
+
+## 4. Documentation Conformance Matrix
+
+| Documentation Area | Canonical Machine Source | Conformance Validator |
+| --- | --- | --- |
+| **CLI commands & flags** | `CLI_COMMAND_DEFINITIONS` (`src/core/cli-command-definitions.js`) & `src/cli.js` | `scripts/validate_documentation_conformance.mjs` |
+| **Artifact paths** | `ARTIFACT_REGISTRY` & `task-paths.js` | `scripts/validate_documentation_conformance.mjs` |
+| **Artifact fields & types** | `schemas/*.schema.json` | `scripts/validate_documentation_conformance.mjs` |
+| **Enums & consts** | `schemas/*.schema.json` | `scripts/validate_documentation_conformance.mjs` |
+| **Lifecycle phases** | `WORK_PHASES` (`src/core/protocol.js`) | `scripts/validate_documentation_conformance.mjs` |
+| **Lifecycle transitions** | `WORK_TRANSITIONS` (`src/core/protocol.js`) + the special `BLOCKED` rule | `scripts/generate_documentation_reference.mjs` and `scripts/validate_documentation_conformance.mjs` |
+| **Stable error codes** | `PUBLIC_ERROR_CODES` (`src/core/error-codes.js`) | `scripts/validate_documentation_conformance.mjs` |
+| **Discovery resume rules** | `DISCOVERY_SURFACES` & `nativeShim` | `scripts/validate_documentation_conformance.mjs` |
+| **Task-layout path freshness** | `TASK_LAYOUT_DOCUMENTS` & `task-paths.js` | `scripts/validate_documentation_conformance.mjs` |
+| **Package-shipped docs and runtime** | `package.json` (`files`) + `docs/PACKAGE_CONTENTS.md` | `tests/package.test.js` + `scripts/package_smoke.mjs` |
+| **Repository Index contract** | `src/repository-index/*`, `src/core/cli-command-definitions.js`, `src/integration.js` | Repository Index unit/native tests + `scripts/verify-tgrep-manifest.mjs` |
+| **Persistent CLI search transport** | `src/persistent-transport/*`, `src/commands/repository-index.js`, `src/repository-index/search.js` | Persistent transport unit/native tests + Repository Index integration tests |
+
+---
+
+## 5. Normative Language Conventions
+
+When writing documentation, use precise terms:
+
+- **MUST / MUST NOT**: Strict protocol requirements enforced by schemas or CLI algorithms.
+- **SHOULD / SHOULD NOT**: Strong interoperability recommendations for harnesses.
+- **MAY**: Optional behaviors or flags.
+- **Illustrative**: Non-normative examples provided for human understanding.
+
+Avoid ambiguous phrases like *"should generally"* or *"usually"* for behaviors that are strictly enforced by the validator.
+
+### Stable requirement IDs
+
+Every protocol-level `MUST` or `MUST NOT` has a stable `FL-<AREA>-<NNN>`
+anchor and an entry in [`protocol-requirements.json`](https://github.com/cassiomc1/forgeloop/blob/main/docs/protocol-requirements.json).
+Each map entry names its normative source, implementation validator, and at
+least one executable test. `npm run docs:check` rejects an unmapped normative
+requirement, an unused mapping, or a missing implementation/test target.
+
+### Documentation impact classification
+
+Classify each documentation-impacting change as one or more of: `NONE`,
+`REFERENCE_ONLY`, `OPERATIONAL`, `NORMATIVE`, `SCHEMA_COMPATIBILITY`,
+`MIGRATION`, or `SECURITY`. Changes that are normative, compatibility,
+migration, or security-sensitive require `npm run docs:check` before merge.
+
+### Multi-Task Layout Rules
+
+- Canonical task-scoped paths are defined in `src/core/task-paths.js` under `.forgeloop/task-state/<taskKey>/`.
+- Operational guides (`README.md`, `GETTING_STARTED.md`, `RECIPES.md`, `CROSS_HARNESS_CONTINUITY.md`, `TROUBLESHOOTING.md`) must document namespaced paths by default.
+- Architecture/integration documents (`LOOP_SYSTEM_DESIGN.md`, `ORCHESTRATOR_INTEGRATION.md`) are covered by the same task-layout conformance scope (`TASK_LAYOUT_DOCUMENTS`).
+- Legacy ForgeLoop 1.0 singleton paths (e.g. `.forgeloop/current-contract.json`) are permitted **only** inside explicit legacy migration regions:
+
+  ```markdown
+  <!-- BEGIN FORGELOOP LEGACY LAYOUT EXAMPLE -->
+  ...
+  <!-- END FORGELOOP LEGACY LAYOUT EXAMPLE -->
+  ```
+
+- `scripts/validate_documentation_conformance.mjs` mechanically rejects any singleton task path outside these markers.
+
+---
+
+## 6. Linking Conventions
+
+- **Relative Links Only**: Always use relative markdown links for repository files (e.g. `[`LOOP_ENGINEERING.md`](../LOOP_ENGINEERING.md)`).
+- **Valid Targets**: Every relative link must point to an existing file and is validated by `python3 scripts/validate_markdown.py`.
+- **Anchors**: Anchor links should match standard GitHub heading slugs.
+
+---
+
+## 7. Diagrams
+
+The repository does not generate diagrams. Lifecycle, verification-trust and
+attestation flows are described in prose in their canonical documents
+(`LOOP_SYSTEM_DESIGN.md`, `docs/REVISION_PROVIDERS.md` and
+`docs/CODE_ATTESTATION.md`). The only visuals are the README assets listed
+below.
+
+---
+
+## 8. README Hero and Package Boundary
+
+README hero assets are branding/conceptual architecture illustrations. They are
+not a canonical protocol diagram. The lifecycle architecture is defined in
+prose by `LOOP_SYSTEM_DESIGN.md`; the CLI-only persistent search
+transport is explained by `docs/PERSISTENT_SEARCH_TRANSPORT.md`. The current
+repository-only assets are `docs/assets/forgeloop-architecture.png`, its
+source [architecture SVG](https://github.com/cassiomc1/forgeloop/blob/main/docs/assets/forgeloop-architecture.svg); neither is a
+package file. The README has no other image; its "Architecture flow" section
+is prose.
+
+The architecture PNG is rendered from the SVG, so edit the SVG and regenerate
+the PNG instead of editing the image. Render it at 1.25× with a headless
+Chromium-based browser, then check the result before committing:
+
+```bash
+chrome --headless=new --hide-scrollbars --force-device-scale-factor=1.25 \
+  --window-size=1600,1282 --screenshot="$PWD/docs/assets/forgeloop-architecture.png" \
+  "file://$PWD/docs/assets/forgeloop-architecture.svg"
+```
+
+The README hero is intentionally GitHub-repository-only:
+
+- `README.md` references `docs/assets/forgeloop-architecture.png` for the hero;
+  it is repository-only and excluded from the npm package. The architecture
+  SVG is the repository-only source of the PNG.
+- `tests/package.test.js` asserts those exclusions so they cannot be silently
+  re-included.
+- The packaged README is therefore not self-contained for that relative hero
+  path; do not claim otherwise.
+- If a portable hero is ever shipped, any relative README asset referenced by
+  packaged Markdown must be present in the package and covered by
+  `tests/package.test.js`.
+
+---
+
+## 9. Documentation Change Checklist for Pull Requests
+
+For documentation-impacting changes, verify each item before merging:
+
+- [ ] Did CLI behavior change?
+- [ ] Did any schema field change?
+- [ ] Did any enum or status change?
+- [ ] Did any lifecycle transition change?
+- [ ] Did any artifact mutation rule change?
+- [ ] Did any stable reason/error code change?
+- [ ] Did cross-harness resume behavior change?
+- [ ] Did package-shipped documentation change?
+- [ ] Were generated reference docs updated (`npm run docs:generate`)?
+- [ ] Did documentation conformance CI pass (`npm run docs:check`)?
+- [ ] If normative language changed, are stable IDs and mappings current?
+- [ ] Is the documentation impact classification recorded in the PR?
+
+---
+
+## 10. Published Documentation Site (docs.page)
+
+The pages under `docs/` are also published as a website by
+[docs.page](https://docs.page) at
+`https://docs.page/cassiomc1/forgeloop~docs-site`. docs.page only serves
+`.mdx` pages, so the site is generated rather than hand-written:
+
+- **Sources stay Markdown**: the canonical files remain `docs/**/*.md`, with the
+  relative links, generated markers and validators described above. Do not
+  add `.mdx` copies to `docs/` or rewrite source links for the site.
+- **Site sources**: [`docs-site/docs.json`](https://github.com/cassiomc1/forgeloop/blob/main/docs-site/docs.json) holds the
+  site name, header links and sidebar, and `docs-site/index.mdx` is the home
+  page. Neither is part of the npm package.
+- **Generator**: `scripts/build-docs-site.mjs` (`npm run docs:site`) converts
+  every `docs/**/*.md` to `.mdx`. It moves the first `#` heading into the page
+  title, drops HTML comments, escapes `<`, `{` and `}` outside code, and points
+  links to other `docs/` pages at their site path (`/CLI_REFERENCE`; `MCP.md` is published as `/FORGELOOP_MCP` because docs.page reserves `/mcp`). Links to
+  every other repository file go to GitHub on `main`.
+- **Publication**: the `Documentation site` workflow
+  (`.github/workflows/docs-site.yml`) runs on pushes to `main` that touch
+  `docs/` or `docs-site/`. It builds the tree, runs `docs.page check`, and
+  force-pushes the result to the `docs-site` branch. Never edit that branch by
+  hand.
+- **Adding or renaming a page**: add or update its entry in the `sidebar` of
+  `docs-site/docs.json` in the same change. The generator fails when a
+  top-level `docs/` page is missing from the sidebar or a sidebar link has no
+  page.
+- **Checking locally**: run `npm run docs:site`, then
+  `npx @docs.page/cli@2.2.0 check --external-links off` inside the printed
+  output directory.

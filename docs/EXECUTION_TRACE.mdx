@@ -1,0 +1,77 @@
+---
+title: "ForgeLoop Execution Trace"
+description: "Reference for history, trace, reflect, and task-level inspect observability projections (ForgeLoop 1.6.0+)."
+---
+
+All views are deterministic read-only projections of canonical artifacts (event ledger + work state). There is no second truth store.
+
+## history
+
+```bash
+forgeloop history --task <id> [--json] [--compact] [--verbose]
+                  [--type <types>] [--phase <phases>] [--failures] [--checks]
+                  [--since <ts>] [--until <ts>] [--limit <n>]
+```
+
+Human output shows chronological events with timestamps from the ledger. JSON output includes:
+
+- `snapshot`: consistency anchors (`stateRevision`, `ledgerTailSequence`)
+- `summary`: event/check/diagnostic counts
+- `historyQuality`: `COMPLETE | PARTIAL | MINIMAL` with reasons
+- `integrity`: ledger validation result
+- `events`: normalized events (category, phase, provenance, references)
+
+Filters are presentation-only; they never weaken integrity validation. Truncation via `--limit` is explicit (`truncated: true`).
+
+## trace
+
+```bash
+forgeloop trace --task <id> --json
+```
+
+Machine-readable reconstruction containing events, lifecycle transitions (including `VERIFICATION_STARTED`), check attempts, diagnostics (legacy diagnoses, structured cases, interventions, dispositions), failure signatures/surfaces, executions, evidence, continuity, recovery, completion, integrity, and snapshot anchors.
+
+Failure surfaces include every canonically verified cycle; a successful
+verification appears explicitly as `surface: []`, enabling deterministic
+`REDUCED -> empty` and intervention `IMPROVED` classification.
+
+Attempt cardinality comes primarily from ledger chronology: one ledger attempt plus its state checkpoint counts once; two distinct ledger events count twice; a state-only check appears as one fallback attempt (`source: "state-fallback"`). Phases are reconstructed forward from milestone events (`TASK_RECEIVED -> RECEIVED` ... `COMPLETION_VALIDATED -> COMPLETE`); events between milestones carry derived phases (for example failed verification -> `DIAGNOSING`, recorded intervention -> `CORRECTING`) with `phaseQuality: "authoritative" | "derived" | "unknown"`. Determinism: identical canonical artifacts produce identical traces except `snapshot.capturedAt`.
+
+## reflect
+
+```bash
+forgeloop reflect --task <id> [--json]
+```
+
+Whole-task retrospective (gain truth comes from the canonical cycle analysis;
+`stallAnalysis` explains historical repetition without changing the fail-fast
+stall decision): verification cycles, failure surfaces, hypothesis summary, intervention effectiveness (`PENDING | INFORMATIVE | NON_INFORMATIVE | IMPROVED | REGRESSED`), strategy fingerprints, oscillation patterns, signals, and a recommended protocol action. Deterministic — ForgeLoop does not call an LLM.
+
+## inspect --task
+
+`forgeloop inspect --task <id>` extends target health with an additive `taskInspection` section: snapshot, lifecycle transitions, history quality, verification attempts per requirement, diagnostic summary, progress evaluation, integrity issues, deterministic explanation reason codes, and the safe next command. Existing top-level inspect fields are unchanged.
+
+## Read-only invariant
+
+`history`, `trace`, `reflect`, `inspect`, `progress` never mutate protocol state, acquire ownership, or append events. Test suites enforce this by hashing the complete `.forgeloop` tree before/after invocation.
+
+## Durable actions in the trace
+
+`trace --json` adds an `actions` projection with totals, state and capability
+counts, required/verified/failed/ambiguous counts, repeated idempotency-key
+attempts, reconciliation count, and action-event count. The projection reads
+the task action artifacts and the same ledger already used by history; it is
+not a second source of lifecycle truth.
+
+An action recorded as `COMMIT_UNKNOWN` is an external-state uncertainty, not a
+diagnostic failure. Reflection surfaces `EXTERNAL_ACTION_RECONCILIATION_REQUIRED`
+and recommends `RECONCILE_EXTERNAL_ACTION` before ordinary retry guidance.
+`FORGELOOP_EXECUTED`, `HOST_REPORTED`, and `EXTERNAL_OBSERVED` remain distinct
+provenance values.
+
+`forgeloop metrics --task <id> --json` projects trajectory counts, action
+outcomes, observed executions, and first/last authoritative ledger timestamps.
+Usage fields remain `null` with `source: "UNKNOWN"` when the host did not
+report them. `forgeloop eval --task <id> --scenario <path> --json` evaluates a
+validated current trace against a project-local reference scenario; an
+efficiency ratio is omitted when no positive comparable-step reference exists.
