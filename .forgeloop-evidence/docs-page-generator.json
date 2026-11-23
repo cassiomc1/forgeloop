@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "docs-page-generator",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:docs-page-generator\",\n      \"digest\": {\n        \"sha256\": \"f6e4c73d1df015d170082df8ed729491e0661e157e9487ff507479be1ae8ae98\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"docs-page-generator\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"73ad38ee9ea388e5dee6dc646f030fccff22beebfdd96368059032a0ef33d54e\",\n      \"contentDigest\": \"f6e4c73d1df015d170082df8ed729491e0661e157e9487ff507479be1ae8ae98\",\n      \"coveredPaths\": [\n        \".github/workflows/docs-site.yml\",\n        \"docs-site/docs.json\",\n        \"docs-site/index.mdx\",\n        \"docs.json\",\n        \"docs/DOCUMENTATION_GUIDE.md\",\n        \"docs/index.mdx\",\n        \"package.json\",\n        \"scripts/build-docs-site.mjs\",\n        \"tests/docs-site.test.js\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"f573e39a149ba8f04af7dc2f43595f5e2ae23d7b7a701ec245948bb48f440bc0\",\n      \"routeFingerprint\": \"c219dcb8a37c9700c86b3b6524351e8f3fe1b46d13c6c34edccd3d67737dc40c\",\n      \"stateFingerprint\": \"1f4cfea93e31014096fa1ae4a24978a0fc07ce768149b7333c417e271f825bc0\",\n      \"receiptFingerprint\": \"945b67c9e561fb053f7bf9727edc2cef5e7a2a4b4d41a3e93d9646d9b4e4652d\",\n      \"ledgerSeq\": 37,\n      \"ledgerHash\": \"7342bd673a1dd34703f2f495e199610e9a3a05bc4a0134910f063a891ccb2d8f\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"requirement-343c23eac46ada3a\",\n          \"requirement\": \"The requested feature behavior is implemented and documented where applicable.\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"90feade86f0fe5eeb934e3ec3eefe02bc9660d41d14310d2c80be18ca5254976\"\n        },\n        {\n          \"id\": \"requirement-59830ebc3a418411\",\n          \"requirement\": \"tests\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"f5eb47bc9af64fc48260acb94f1acf1422d2f7e8dae4e6484cc1d7bbf01bb286\"\n        },\n        {\n          \"id\": \"verify-fast\",\n          \"requirement\": \"The requested feature behavior is implemented and documented where applicable.\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "docs-page-generator",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "8ced49162467f818c903462e039f391e87e91c9d",
+      "observedRevision": "8ced49162467f818c903462e039f391e87e91c9d",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/docs-page-site",
+        "head": "8ced49162467f818c903462e039f391e87e91c9d"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "f573e39a149ba8f04af7dc2f43595f5e2ae23d7b7a701ec245948bb48f440bc0",
+      "routeFingerprint": "c219dcb8a37c9700c86b3b6524351e8f3fe1b46d13c6c34edccd3d67737dc40c",
+      "stateFingerprint": "1f4cfea93e31014096fa1ae4a24978a0fc07ce768149b7333c417e271f825bc0",
+      "receiptFingerprint": "945b67c9e561fb053f7bf9727edc2cef5e7a2a4b4d41a3e93d9646d9b4e4652d",
+      "ledgerSeq": 37,
+      "ledgerHash": "7342bd673a1dd34703f2f495e199610e9a3a05bc4a0134910f063a891ccb2d8f"
+    },
+    "entries": [
+      {
+        "path": ".github/workflows/docs-site.yml",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "ab36ae77c60e84a445a900f0c34ac7a35e04d6cbc08eacf26805287ccd3e099c",
+        "providerContentId": "f772681c0b5db02ae9e56dff9a0593c57062f610",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs-site/docs.json",
+        "sourcePath": "docs.json",
+        "operation": "RENAMED",
+        "kind": "FILE",
+        "sha256": "554acc98b75e1d73164598bd8d9dbab51258055a1adee55172bef663d3895d4f",
+        "providerContentId": "464ca8c50ebd8621cbc8cdf7519455640d4c09c4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs-site/index.mdx",
+        "sourcePath": "docs/index.mdx",
+        "operation": "RENAMED",
+        "kind": "FILE",
+        "sha256": "d99fa0c36d84d62183178dbc319743bde17c84d502cd0910b51addb104aa9623",
+        "providerContentId": "3d489e50733d53a9923dabb3c60b976baae8e63b",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "docs/DOCUMENTATION_GUIDE.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "3931ec006b8817a7d373ff05a55e19bb4691ce291a5f834f0f8ce7bb26f3fca1",
+        "providerContentId": "ae07592f285d3dd4312785529924dc6015497d3f",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "package.json",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "a439b14ccb789a70fd577677a037b023c73e4912a97e2247e5026cf854828db4",
+        "providerContentId": "969cae574123243c001e395364959a9c661c7db4",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "scripts/build-docs-site.mjs",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "5dd46846132c13a84243fdce2c66bc63ea659c003fea0415dbd6ce7e64151974",
+        "providerContentId": "e79ff2abc61ac0845842bcac4f66ec76e46f4be0",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      },
+      {
+        "path": "tests/docs-site.test.js",
+        "operation": "ADDED",
+        "kind": "FILE",
+        "sha256": "bbea999aef9908fdf8665ab779f8ee39a2b87347b32b87c09d3ac2791b05c910",
+        "providerContentId": "8f2c1de2cdf90044719748c658a82a9746ca6cc9",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "f6e4c73d1df015d170082df8ed729491e0661e157e9487ff507479be1ae8ae98"
+  },
+  "manifestFingerprint": "73ad38ee9ea388e5dee6dc646f030fccff22beebfdd96368059032a0ef33d54e",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Implement the requested feature within the confirmed project scope.",
+    "successCriteria": [
+      "[object Object]"
+    ],
+    "checks": [
+      {
+        "id": "requirement-343c23eac46ada3a",
+        "requirement": "The requested feature behavior is implemented and documented where applicable.",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "requirement-59830ebc3a418411",
+        "requirement": "tests",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-fast",
+        "requirement": "The requested feature behavior is implemented and documented where applicable.",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-23T16:53:56.865Z",
+    "completedAt": "2026-11-23T17:02:34.227Z",
+    "durationMs": 517362,
+    "phaseDurationsMs": {
+      "planning": 19805,
+      "executing": 417794,
+      "verifying": 73858,
+      "reviewing": 5905
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 3,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "7ff54132435dcd2206eb671a21402e95d47f28cd3668e525a78c22b5ddbccc55"
+}

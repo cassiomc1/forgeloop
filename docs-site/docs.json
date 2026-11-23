@@ -76,7 +76,7 @@
       "group": "Integrations",
       "pages": [
         { "title": "Universal integration API", "href": "/UNIVERSAL_INTEGRATION" },
-        { "title": "MCP", "href": "/MCP" },
+        { "title": "MCP", "href": "/FORGELOOP_MCP" },
         { "title": "Platform adapters", "href": "/PLATFORM_ADAPTERS" },
         { "title": "Audit UX read model", "href": "/AUDIT_UX" },
         { "title": "ForgeLoop Audit", "href": "/FORGELOOP_AUDIT" }

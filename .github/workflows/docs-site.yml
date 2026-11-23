@@ -1,0 +1,54 @@
+name: Documentation site
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
+      - "docs-site/**"
+      - "scripts/build-docs-site.mjs"
+      - ".github/workflows/docs-site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: documentation-site
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: Build and publish the docs.page site
+    runs-on: [self-hosted, Linux, X64, forgeloop-linux-remote]
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Build site tree
+        run: node scripts/build-docs-site.mjs --out "$RUNNER_TEMP/docs-site"
+      - name: Check rendering and links with the docs.page CLI
+        working-directory: ${{ runner.temp }}/docs-site
+        run: npx --yes @docs.page/cli@2.2.0 check --external-links off
+      - name: Publish to the docs-site branch
+        working-directory: ${{ runner.temp }}/docs-site
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          git init --quiet --initial-branch=docs-site
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit --quiet -m "docs-site: build from ${GITHUB_SHA}"
+          git push --force --quiet \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            HEAD:refs/heads/docs-site
