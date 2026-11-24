@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "kind": "forgeloop-evidence-bundle",
+  "taskId": "readme-badges",
+  "forgeloopVersion": "2.5.0",
+  "statement": {
+    "text": "{\n  \"_type\": \"https://in-toto.io/Statement/v1\",\n  \"subject\": [\n    {\n      \"name\": \"forgeloop-task:readme-badges\",\n      \"digest\": {\n        \"sha256\": \"628341cf78850f7513fa05363b2287ddf0e81862a873032a1c084bbce6e6e0b8\"\n      }\n    }\n  ],\n  \"predicateType\": \"https://forgeloop.dev/attestation/v1\",\n  \"predicate\": {\n    \"schemaVersion\": 2,\n    \"protocol\": {\n      \"name\": \"ForgeLoop\",\n      \"protocolVersion\": 1\n    },\n    \"task\": {\n      \"taskId\": \"readme-badges\",\n      \"verificationCycle\": 1\n    },\n    \"content\": {\n      \"manifestFingerprint\": \"edc13a60e6ea8610641144747b0d5e9fd79dcdc89ab786dae8c379a9cbde594b\",\n      \"contentDigest\": \"628341cf78850f7513fa05363b2287ddf0e81862a873032a1c084bbce6e6e0b8\",\n      \"coveredPaths\": [\n        \"README.md\"\n      ]\n    },\n    \"evidence\": {\n      \"contractFingerprint\": \"6e5575606fe76f8ce097a4e9ec35143de8d248486ee76ab601e4ef49887e1f79\",\n      \"routeFingerprint\": \"f1b26ddab6224ec42f7bfbf4bcc2ea1c9cba66fb806e65b69eaf264c7c6f9ce9\",\n      \"stateFingerprint\": \"e3c4a84f78de3e592cb2e0a2e0ed22cf1d6569a509f848395b49340d8caa6233\",\n      \"receiptFingerprint\": \"f980959780790b88e2b4b1f461638b16a42a2a7e90cac5a69cf0eb0f23405c08\",\n      \"ledgerSeq\": 49,\n      \"ledgerHash\": \"e7aeea177d3c3808a8e9f6c4a08d28a9cd6742ad632ace074a495db370341b17\"\n    },\n    \"verification\": {\n      \"completion\": \"VALID\",\n      \"audit\": \"VALID\",\n      \"checks\": [\n        {\n          \"id\": \"readme-badges-real-status\",\n          \"requirement\": \"complete-documentation\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"c44ef5cbcb4957ddf62db0b1ffa038c1f3a565883cd997948ecca11989ed9f1c\"\n        },\n        {\n          \"id\": \"verify-documentation\",\n          \"requirement\": \"verify-documentation\",\n          \"status\": \"passed\",\n          \"provenance\": \"FORGELOOP_EXECUTED\",\n          \"exitCode\": 0,\n          \"argvDigest\": \"5730e2a87ecd718b046cc9bd54056300f5712eb2ea3f77adc925f53c26b76226\"\n        }\n      ]\n    }\n  }\n}\n"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "protocolVersion": 1,
+    "taskId": "readme-badges",
+    "verificationCycle": 1,
+    "capture": {
+      "mode": "WORKTREE",
+      "revisionProvider": "git",
+      "baseRevision": "d07cc4d842444022a9d5c20556e7c1db9036b6aa",
+      "observedRevision": "d07cc4d842444022a9d5c20556e7c1db9036b6aa",
+      "providerMetadata": {
+        "objectFormat": "sha1",
+        "remote": "https://github.com/cassiomc1/forgeloop.git",
+        "branch": "claude/readme-badges-evidence",
+        "head": "d07cc4d842444022a9d5c20556e7c1db9036b6aa"
+      }
+    },
+    "bindings": {
+      "contractFingerprint": "6e5575606fe76f8ce097a4e9ec35143de8d248486ee76ab601e4ef49887e1f79",
+      "routeFingerprint": "f1b26ddab6224ec42f7bfbf4bcc2ea1c9cba66fb806e65b69eaf264c7c6f9ce9",
+      "stateFingerprint": "e3c4a84f78de3e592cb2e0a2e0ed22cf1d6569a509f848395b49340d8caa6233",
+      "receiptFingerprint": "f980959780790b88e2b4b1f461638b16a42a2a7e90cac5a69cf0eb0f23405c08",
+      "ledgerSeq": 49,
+      "ledgerHash": "e7aeea177d3c3808a8e9f6c4a08d28a9cd6742ad632ace074a495db370341b17"
+    },
+    "entries": [
+      {
+        "path": "README.md",
+        "operation": "MODIFIED",
+        "kind": "FILE",
+        "sha256": "8a9340ca21a14a94c9588e0d6ef982bb7b8b783b4af9ca38e16a04628e59954b",
+        "providerContentId": "a33edc0af8fc34e37f2022cbb4657869c2c63427",
+        "providerMetadata": {
+          "score": null,
+          "objectFormat": "sha1"
+        }
+      }
+    ],
+    "contentDigest": "628341cf78850f7513fa05363b2287ddf0e81862a873032a1c084bbce6e6e0b8"
+  },
+  "manifestFingerprint": "edc13a60e6ea8610641144747b0d5e9fd79dcdc89ab786dae8c379a9cbde594b",
+  "signature": null,
+  "summary": {
+    "bound": false,
+    "note": "Informational projection of the contract and receipt; only the statement and manifest are cryptographically bound.",
+    "objective": "Make every README workflow badge report a real status: remove the Dependency review badge (pull_request-only workflow) and drop the branch=main filter from the tag-driven Publish npm package and Release notes badges.",
+    "successCriteria": [
+      "[object Object]"
+    ],
+    "checks": [
+      {
+        "id": "readme-badges-real-status",
+        "requirement": "complete-documentation",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "verify-documentation",
+        "requirement": "verify-documentation",
+        "status": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "metrics": {
+    "bound": false,
+    "receivedAt": "2026-11-24T01:48:53.695Z",
+    "completedAt": "2026-11-24T01:55:34.695Z",
+    "durationMs": 401000,
+    "phaseDurationsMs": {
+      "planning": 324122,
+      "executing": 4775,
+      "verifying": 66037,
+      "reviewing": 6066
+    },
+    "verificationCycles": 1,
+    "diagnoses": 0,
+    "checksPassed": 2,
+    "checksFailed": 0
+  },
+  "redactions": [
+    "absolute-paths",
+    "command-argv",
+    "command-output",
+    "environment",
+    "ledger-events"
+  ],
+  "digest": "b625c30404964aae341e5fb44d27ac64fc281a1ab6c15643bf39b95cff684ae1"
+}
